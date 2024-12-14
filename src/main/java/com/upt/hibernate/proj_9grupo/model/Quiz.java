@@ -25,6 +25,10 @@ public class Quiz {
     @ManyToOne
     @JoinColumn(name = "idProfessor", nullable = false)
     private Professor professor;
+    
+    @ManyToOne
+    @JoinColumn(name = "disciplina_id", nullable = false) 
+    private Disciplina disciplina;
 
     @OneToMany(mappedBy = "quiz")
     private List<Pergunta> perguntas = new ArrayList<>();
@@ -58,7 +62,15 @@ public class Quiz {
     	this.perguntas = perguntas; 
     }
 
-    public void addPergunta(Pergunta pergunta) {
+    public Disciplina getDisciplina() {
+		return disciplina;
+	}
+    
+	public void setDisciplina(Disciplina disciplina) {
+		this.disciplina = disciplina;
+	}
+	
+	public void addPergunta(Pergunta pergunta) {
         perguntas.add(pergunta);
         pergunta.setQuiz(this);
     }
