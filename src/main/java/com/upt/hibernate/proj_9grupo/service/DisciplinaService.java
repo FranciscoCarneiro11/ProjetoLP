@@ -1,6 +1,7 @@
 package com.upt.hibernate.proj_9grupo.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,10 @@ public class DisciplinaService {
 
     public List<Disciplina> listarDisciplinasPorAno(AnoEscolaridade anoEscolaridade) {
         return disciplinaRepository.findByAnoEscolaridade(anoEscolaridade);
+    }
+    
+    public Optional<Disciplina> getDisciplinaById(Long id) {
+        return disciplinaRepository.findById(id);
     }
 
     public void eliminarDisciplina(Long id) {

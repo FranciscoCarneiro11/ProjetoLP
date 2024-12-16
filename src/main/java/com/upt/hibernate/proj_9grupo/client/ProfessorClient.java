@@ -52,7 +52,6 @@ public class ProfessorClient {
         professor.setNome("Teste Professor");
         professor.setEmail("teste.professor@gmail.com");
         professor.setNumProfessor(1); 
-        professor.setDisciplina("Disciplina Teste");
         professor.setTipoUtilizador(TipoUtilizador.professor);
         
         ResponseEntity<Professor> response = restTemplate.postForEntity(rootAPIURL, professor, Professor.class);
@@ -74,7 +73,6 @@ public class ProfessorClient {
         professor.setId(id.intValue()); 
         professor.setNome("João Professor");
         professor.setEmail("joao.professor@gmail.com");
-        professor.setDisciplina("Portugues");
         
         ResponseEntity<Professor> response = restTemplate.exchange(rootAPIURL + "/" + id, HttpMethod.PUT, new HttpEntity<>(professor), Professor.class);
         

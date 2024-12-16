@@ -56,6 +56,12 @@ public class ProfessorController {
 	        return novoProfessor;
 	}
 	
+	@PostMapping("/{professorId}/disciplina/{disciplinaId}")
+    public ResponseEntity<String> associarDisciplina(@PathVariable Long professorId, @PathVariable Long disciplinaId) {
+        professorService.associarProfessorADisciplina(professorId, disciplinaId);
+        return ResponseEntity.ok("Disciplina associada com sucesso ao professor!");
+    }
+	
 	@PutMapping("/{id}")
     public ResponseEntity<Professor> updateProfessor(@PathVariable Long id, @RequestBody Professor professor) {
         if (id == null) {

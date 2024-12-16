@@ -18,9 +18,6 @@ public class Professor extends Utilizador {
 
     @Column(name = "numProfessor", nullable = false)
     private int numProfessor;
-
-    @Column(name = "disciplina", length = 100)
-    private String disciplina;
     
     @OneToMany(mappedBy = "professor")
     private List<Quiz> quizzes = new ArrayList<>();
@@ -47,13 +44,4 @@ public class Professor extends Utilizador {
         this.numProfessor = numProfessor;
     }
 
-    public String getDisciplina() {
-        return disciplina;
-    }
-
-    public void setDisciplina(String disciplina) {
-        this.disciplina = disciplina;
-    }  
-    
-    
 }

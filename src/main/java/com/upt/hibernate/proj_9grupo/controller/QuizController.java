@@ -28,8 +28,8 @@ public class QuizController {
 	}
 	
 	@PostMapping
-	public Quiz criarQuiz(@RequestBody Quiz quiz, @RequestParam int professorId, @RequestParam Long disciplinaId) {
-		return quizService.criarQuiz(quiz, professorId, disciplinaId);
+	public Quiz criarQuiz(@RequestBody Quiz quiz) {
+	    return quizService.criarQuiz(quiz);
 	}
 	
 	@DeleteMapping("/{id}")

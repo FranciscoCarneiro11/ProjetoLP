@@ -34,11 +34,15 @@ public class RespostaQuizController {
 	
 	 
 	@PostMapping
-    public ResponseEntity<RespostaQuiz> criarRespostaQuiz(@RequestBody RespostaQuiz respostaquiz) {
-        RespostaQuiz novaResposta = respostaQuizService.criarRespostaQuiz(respostaquiz);
-        return ResponseEntity.ok(novaResposta);
-    }
-	
+	public ResponseEntity<RespostaQuiz> criarRespostaQuiz(@RequestBody RespostaQuiz respostaQuiz) {
+	    if (respostaQuiz.getAluno() == null || respostaQuiz.getAluno().getId() <= 0) {
+	        throw new RuntimeException("O aluno deve ser fornecido.");
+	    }
+	    
+	    // Chame o serviço para criar a resposta
+	    RespostaQuiz novaResposta = respostaQuizService.criarRespostaQuiz(respostaQuiz);
+	    return ResponseEntity.ok(novaResposta);
+	}
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> eliminarResposta(@PathVariable Long id) {
 		respostaQuizService.eliminarRespostaQuiz(id);

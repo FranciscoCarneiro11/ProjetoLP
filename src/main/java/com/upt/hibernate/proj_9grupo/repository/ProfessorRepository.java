@@ -10,6 +10,5 @@ public interface ProfessorRepository extends JpaRepository<Professor, Long> {
 	
 	List <Professor> findByNome(String nome);
 	List <Professor> findByNumProfessor(int numProfessor);
-	List <Professor> findByDisciplina(String disciplina);
 	boolean existsByNumProfessor(int numProfessor);
 }

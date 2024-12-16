@@ -33,34 +33,29 @@ public class QuizService {
 		return quizRepository.findById(id);
 		}
 
-	public Quiz criarQuiz(Quiz quiz, int professorId, Long disciplinaId) {
-		if(quiz.getTitulo() == null || quiz.getTitulo().isEmpty()) {
-			throw new RuntimeException("O título do quiz não pode ser vazio!");
-		}
-		
-		if (quiz.getProfessor() == null || !professorRepository.existsById((long) quiz.getProfessor().getId())) {
-	        throw new RuntimeException("Apenas professores registrados podem criar quizzes!");
+	public Quiz criarQuiz(Quiz quiz) {
+	    if (quiz.getTitulo() == null || quiz.getTitulo().isEmpty()) {
+	        throw new RuntimeException("O título do quiz não pode ser vazio!");
 	    }
-		
-		if(quiz.getProfessor() == null) {
-			throw new RuntimeException("O professor não pode ser nulo!!");
-		}
-		
-		if(quiz.getDisciplina() == null) {
-			throw new RuntimeException("A disciplina não pode ser nula!!");
-		}
-		
-		Optional<Professor> professorExistente = professorRepository.findById((long) quiz.getProfessor().getId());
-		if (!professorExistente.isPresent()) {
-		    throw new RuntimeException("Professor não encontrado!");
-		}
-		
-		Optional<Disciplina> disciplinaExistente = disciplinaRepository.findById((long) quiz.getDisciplina().getId());
-		if (!disciplinaExistente.isPresent()) {
-		    throw new RuntimeException("Disciplina não encontrada!");
-		}
-		
-		return quizRepository.save(quiz);
+
+	    if (quiz.getProfessor() == null || quiz.getDisciplina() == null) {
+	        throw new RuntimeException("O professor e a disciplina não podem ser nulos!");
+	    }
+
+	    Optional<Professor> professorExistente = professorRepository.findById((long) quiz.getProfessor().getId());
+	    if (!professorExistente.isPresent()) {
+	        throw new RuntimeException("Professor não encontrado!");
+	    }
+
+	    Optional<Disciplina> disciplinaExistente = disciplinaRepository.findById(quiz.getDisciplina().getId());
+	    if (!disciplinaExistente.isPresent()) {
+	        throw new RuntimeException("Disciplina não encontrada!");
+	    }
+
+	    quiz.setProfessor(professorExistente.get());
+	    quiz.setDisciplina(disciplinaExistente.get());
+
+	    return quizRepository.save(quiz);
 	}
 
 	public void eliminarQuiz(Long id) {

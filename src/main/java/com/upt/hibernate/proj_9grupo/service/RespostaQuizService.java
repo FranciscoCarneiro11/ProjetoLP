@@ -49,18 +49,19 @@ public class RespostaQuizService {
 	}
 
 	public RespostaQuiz criarRespostaQuiz(RespostaQuiz respostaquiz) {
-	    Optional<Aluno> alunoOpt = alunoRepository.findById((long) respostaquiz.getAluno().getId());
+		Optional<Aluno> alunoOpt = alunoRepository.findById((long) respostaquiz.getAluno().getId());
+		Optional<Quiz> quizOpt = quizRepository.findById((long) respostaquiz.getQuiz().getId());
 	    if (!alunoOpt.isPresent()) {
 	        throw new RuntimeException("Aluno não encontrado com ID: " + respostaquiz.getAluno().getId());
 	    }
-
-	    Optional<Quiz> quizOpt = quizRepository.findById((long) respostaquiz.getQuiz().getId());
 	    if (!quizOpt.isPresent()) {
 	        throw new RuntimeException("Quiz não encontrado com ID: " + respostaquiz.getQuiz().getId());
 	    }
 
-	    Quiz quiz = quizOpt.get();
-	    List<Pergunta> perguntas = perguntaRepository.findByQuiz(quiz); 
+	    respostaquiz.setAluno(alunoOpt.get());
+	    respostaquiz.setQuiz(quizOpt.get());
+
+	    List<Pergunta> perguntas = perguntaRepository.findByQuiz(quizOpt.get());
 
 	    int pontuacao = 0;
 	    List<RespostaPergunta> respostasPerguntas = new ArrayList<>();
@@ -74,37 +75,36 @@ public class RespostaQuizService {
 
 	            RespostaPergunta respostaPergunta = new RespostaPergunta();
 	            respostaPergunta.setResposta(respostaDada);
-	            respostaPergunta.setAluno(alunoOpt.get()); 
-	            respostaPergunta.setRespostaQuiz(respostaquiz); 
+	            respostaPergunta.setAluno(alunoOpt.get());
+	            respostaPergunta.setRespostaQuiz(respostaquiz);
 	            respostasPerguntas.add(respostaPergunta);
 	        }
 	    }
 
 	    respostaquiz.setPontuacao(pontuacao);
-	    
+
 	    if (respostaquiz.getAluno() == null) {
-	        throw new RuntimeException("O aluno não pode ser nulo!");
-	    }
-	    if (respostaquiz.getQuiz() == null) {
-	        throw new RuntimeException("O quiz não pode ser nulo!");
-	    }
-	    if (respostaquiz.getPontuacao() < 0) {
-	        throw new RuntimeException("A pontuação não pode ser menor que 0 !");
-	    }
+            throw new RuntimeException("O aluno não pode ser nulo!");
+        }
+        if (respostaquiz.getQuiz() == null) {
+            throw new RuntimeException("O quiz não pode ser nulo!");
+        }
+        if (respostaquiz.getPontuacao() < 0) {
+            throw new RuntimeException("A pontuação não pode ser menor que 0 !");
+        }
 
 	    HistoricoQuiz historico = new HistoricoQuiz();
 	    historico.setAluno(respostaquiz.getAluno());
 	    historico.setQuiz(respostaquiz.getQuiz());
-	    historico.setPontuacao(pontuacao); 
-	    historico.setDataRealizacao(LocalDateTime.now());        
+	    historico.setPontuacao(pontuacao);
+	    historico.setDataRealizacao(LocalDateTime.now());
 	    historicoQuizRepository.save(historico);
-	    
+
 	    RespostaQuiz savedRespostaQuiz = respostaquizRepository.save(respostaquiz);
 
-	    // Salvar as respostas às perguntas
 	    for (RespostaPergunta respostaPergunta : respostasPerguntas) {
-	        respostaPergunta.setRespostaQuiz(savedRespostaQuiz); // Associar a resposta do quiz
-	        respostaPerguntaRepository.save(respostaPergunta); // Salvar cada resposta
+	        respostaPergunta.setRespostaQuiz(savedRespostaQuiz);
+	        respostaPerguntaRepository.save(respostaPergunta);
 	    }
 
 	    return savedRespostaQuiz;
@@ -127,4 +127,7 @@ public class RespostaQuizService {
     }
 	
 }
+
+
+
 

@@ -1,7 +1,10 @@
 package com.upt.hibernate.proj_9grupo.service;
 
+import com.upt.hibernate.proj_9grupo.model.Disciplina;
 import com.upt.hibernate.proj_9grupo.model.Professor;
+import com.upt.hibernate.proj_9grupo.model.ProfessorDisciplina;
 import com.upt.hibernate.proj_9grupo.model.Utilizador;
+import com.upt.hibernate.proj_9grupo.repository.ProfessorDisciplinaRepository;
 import com.upt.hibernate.proj_9grupo.repository.ProfessorRepository;
 import com.upt.hibernate.proj_9grupo.repository.UtilizadorRepository;
 
@@ -15,11 +18,15 @@ public class ProfessorService {
 
 	private final ProfessorRepository professorRepository;
 	private final UtilizadorRepository utilizadorRepository;
+	private final DisciplinaService disciplinaService;
+	private final ProfessorDisciplinaRepository professorDisciplinaRepository;
 	
 	@Autowired
-	public ProfessorService(ProfessorRepository professorRepository, UtilizadorRepository utilizadorRepository) {
+	public ProfessorService(ProfessorRepository professorRepository, UtilizadorRepository utilizadorRepository, DisciplinaService disciplinaService, ProfessorDisciplinaRepository professorDisciplinaRepository) {
 		this.professorRepository = professorRepository;
 		this.utilizadorRepository = utilizadorRepository;
+		this.disciplinaService =  disciplinaService;
+		this.professorDisciplinaRepository = professorDisciplinaRepository;
 	}
 	
 	public List<Professor> getAllProfessores(){
@@ -58,10 +65,6 @@ public class ProfessorService {
 			 throw new IllegalArgumentException("O email do professor não pode ser vazio.");
 		 }
 		 
-		 if (detalhesProfessor.getDisciplina() == null || detalhesProfessor.getDisciplina().isEmpty()) {
-			 throw new IllegalArgumentException("A disciplina do professor não pode ser vazia.");
-		 }
-		 
 		 System.out.println("Atualizando professor com ID: " + id);
 	     System.out.println("Detalhes do Professor: " + detalhesProfessor);
 		
@@ -69,7 +72,6 @@ public class ProfessorService {
 		if(professor != null) {
 			professor.setNome(detalhesProfessor.getNome());
 			professor.setEmail(detalhesProfessor.getEmail());
-			professor.setDisciplina(detalhesProfessor.getDisciplina());
 			professor.setNumProfessor(detalhesProfessor.getNumProfessor());
 			
 			return professorRepository.save(professor);
@@ -86,6 +88,19 @@ public class ProfessorService {
 		} else {
 				throw new RuntimeException("Professor não encontrado com o id: "+ id);
 		}
+	}
+	
+	public void associarProfessorADisciplina(Long professorId, Long disciplinaId) {
+	    Professor professor = getProfessorById(professorId)
+	            .orElseThrow(() -> new RuntimeException("Professor não encontrado com ID: " + professorId));
+
+	    Disciplina disciplina = disciplinaService.getDisciplinaById(disciplinaId)
+	            .orElseThrow(() -> new RuntimeException("Disciplina não encontrada com ID: " + disciplinaId));
+
+	    ProfessorDisciplina professorDisciplina = new ProfessorDisciplina();
+	    professorDisciplina.setProfessor(professor);
+	    professorDisciplina.setDisciplina(disciplina);
+	    professorDisciplinaRepository.save(professorDisciplina);
 	}
 	
 	

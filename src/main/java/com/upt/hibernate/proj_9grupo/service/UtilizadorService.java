@@ -82,7 +82,6 @@ public class UtilizadorService {
 			if (existingProfessor != null) {
 				existingProfessor.setNome(((Professor) utilizador).getNome());
 				existingProfessor.setEmail(((Professor) utilizador).getEmail());
-				existingProfessor.setDisciplina(((Professor) utilizador).getDisciplina());
 				existingProfessor.setNumProfessor(((Professor) utilizador).getNumProfessor());
 				return professorRepository.save(existingProfessor);
 				}
