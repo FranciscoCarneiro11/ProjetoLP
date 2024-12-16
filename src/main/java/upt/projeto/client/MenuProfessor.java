@@ -17,19 +17,16 @@ import upt.projeto.service.LoginService;
 public class MenuProfessor {
 
     private Stage primaryStage; 
-    private List<String> disciplinas;
     private LoginService loginService;
     private Utilizador professor;
 
     public MenuProfessor() {
-        this.disciplinas = new ArrayList<>(); 
         this.primaryStage = primaryStage;
         this.loginService = loginService;
     }
 
     public MenuProfessor(Stage primaryStage, LoginService loginService) {
         this.primaryStage = primaryStage;
-        this.disciplinas = new ArrayList<>(); 
         this.loginService = loginService;
     }
     
@@ -49,6 +46,10 @@ public class MenuProfessor {
         Button verRespostasButton = new Button("Ver Respostas dos Alunos");
         Button logoutButton = new Button("Sair");
 
+        verDadosButton.setOnAction(e ->{
+        	mostrarDadosPessoais(professor);
+        });
+        
         verProfessoresButton.setOnAction(e->{
         	verProfessores();
         });
@@ -69,8 +70,30 @@ public class MenuProfessor {
     }
     
    
-    private void verDadosPessoais() {
-    	
+    private void mostrarDadosPessoais(Utilizador utilizador) {
+        if (utilizador instanceof Professor) {
+            Professor professor = (Professor) utilizador; 
+
+            Stage dadosPessoaisStage = new Stage();
+            dadosPessoaisStage.setTitle("Dados Pessoais");
+
+            Label nomeLabel = new Label("Nome: " + professor.getNome());
+            Label emailLabel = new Label("Email: " + professor.getEmail());
+            Label numProfessorLabel = new Label("Número de Professor: " + professor.getNumProfessor());
+
+            Button voltarButton = new Button("Voltar");
+            voltarButton.setOnAction(e -> dadosPessoaisStage.close());
+
+            VBox dadosLayout = new VBox(10);
+            dadosLayout.setAlignment(Pos.CENTER);
+            dadosLayout.getChildren().addAll(nomeLabel, emailLabel, numProfessorLabel, voltarButton);
+
+            Scene dadosScene = new Scene(dadosLayout, 400, 300);
+            dadosPessoaisStage.setScene(dadosScene);
+            dadosPessoaisStage.show();
+        } else {
+            System.out.println("O utilizador não é um professor.");
+        }
     }
     
     private void verProfessores() {

@@ -83,6 +83,15 @@ public class LoginService {
         }
     }
     
+
+    public Professor getDadosProfessor(String email) {
+        Utilizador utilizador = getUtilizador(email);
+        if (utilizador instanceof Professor) {
+            return (Professor) utilizador; 
+        }
+        return null;
+    }
+    
     public boolean criarAluno(Aluno aluno) {
         String url = BASE_URL + "/aluno"; 
         ResponseEntity<Aluno> response = restTemplate.postForEntity(url, aluno, Aluno.class);
@@ -95,5 +104,7 @@ public class LoginService {
             return false; 
         }
     }
+    
+    
     
 }

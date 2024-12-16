@@ -82,7 +82,7 @@ public class Teste extends Application {
 	            System.out.println("Login bem sucedido: Email: " + email);
 	            loginStage.close();
 	            Utilizador utilizador = loginService.getUtilizador(email); 
-	            if (utilizador != null) {
+	            if (utilizador != null) {		            
 	                if (utilizador.getTipoUtilizador() == Utilizador.TipoUtilizador.professor) {
 	                    MenuProfessor menuProfessor = new MenuProfessor(primaryStage, loginService);
 	                    menuProfessor.setProfessor(utilizador);
