@@ -84,7 +84,7 @@ public class MenuProfessor {
         
         if (professores != null && !professores.isEmpty()) {
             for (Professor professor : professores) {
-                Label professorLabel = new Label("Nome: " + professor.getNome() + ", Email: " + professor.getEmail() + ", Número: " + professor.getNumProfessor() + ", Disciplina: " + professor.getDisciplina());
+                Label professorLabel = new Label("Nome: " + professor.getNome() + ", Email: " + professor.getEmail() + ", Número: " + professor.getNumProfessor());
                 professoresLayout.getChildren().add(professorLabel);
             }
         } else {

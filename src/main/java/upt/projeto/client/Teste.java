@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import upt.projeto.model.Administrador;
 import upt.projeto.model.Aluno;
 import upt.projeto.model.Professor;
 import upt.projeto.model.Utilizador;
@@ -115,10 +116,12 @@ public class Teste extends Application {
         
         Button alunoButton = new Button("Criar Conta como Aluno");
         Button professorButton = new Button("Criar Conta como Professor");
+        Button administradorButton = new Button("Criar Conta como Administrador");
         
         alunoButton.setOnAction(e -> criarContaAluno(createAccountStage));
         professorButton .setOnAction(e -> criarContaProfessor(createAccountStage));
-        
+        administradorButton .setOnAction(e -> criarContaAdministrador(createAccountStage));
+       
         Button voltarButton = new Button("Voltar");
         voltarButton.setOnAction(e -> {
         	createAccountStage.close(); 
@@ -127,7 +130,7 @@ public class Teste extends Application {
         
         VBox selectionLayout = new VBox(10);
         selectionLayout.setAlignment(Pos.CENTER);
-        selectionLayout.getChildren().addAll(alunoButton, professorButton);
+        selectionLayout.getChildren().addAll(alunoButton, professorButton, administradorButton);
 
         Scene selectionScene = new Scene(selectionLayout, 1280, 720);
         createAccountStage.setScene(selectionScene);
@@ -149,6 +152,10 @@ public class Teste extends Application {
         TextField numeroAlunoField = new TextField();
         numeroAlunoField.setPromptText("Escreva o seu número de aluno");
         
+        Label anoEscolaridadeLabel = new Label("Ano de escolaridade:");
+        TextField anoescolaridadeField = new TextField();
+        anoescolaridadeField.setPromptText("Escreva o seu número de aluno");
+        
         Label passwordLabel = new Label("Password:");
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Escreva a sua password");
@@ -159,27 +166,37 @@ public class Teste extends Application {
             String email = emailField.getText();
             int numeroAluno = 0;
             try {
-                numeroAluno = Integer.parseInt(numeroAlunoField.getText());
+            	numeroAluno = Integer.parseInt(numeroAlunoLabel.getText());
             } catch (NumberFormatException ex) {
-                System.out.println("Número de aluno inválido! Por favor, insira um número válido.");
+                System.out.println("Número de aluno inválido. Por favor, insira um número válido.");
             }
+            int anoEscolaridade = 0;
             String password = passwordField.getText();
- 
-            Aluno novoAluno = new Aluno(nome, email, numeroAluno, password);
+
+            Aluno novoAluno = new Aluno(nome, email, numeroAluno,anoEscolaridade, password);
             utilizadores.add(novoAluno);
-            System.out.println("Conta de aluno criada: " + novoAluno);
+            LoginService loginService = new LoginService();
+            boolean sucesso = loginService.criarAluno(novoAluno);
+            if (sucesso) {
+                System.out.println("Conta de aluno criada com sucesso!");
+                createAccountStage.close(); 
+                telaLogin();
+            } else {
+                System.out.println("Falha ao criar conta de aluno.");
+            }
+            System.out.println("Conta de professor criada: " + novoAluno);    //usar o to string da classe Professor em vez do da classe Utilizador
             createAccountStage.close();
         });
-        
+
         Button voltarButton = new Button("Voltar");
         voltarButton.setOnAction(e -> {
-        	createAccountStage.close(); 
-            primaryStage.show(); 
+            createAccountStage.close();
+            primaryStage.show();
         });
-        
+
         VBox createAccountLayout = new VBox(10);
         createAccountLayout.setAlignment(Pos.CENTER);
-        createAccountLayout.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, numeroAlunoLabel, numeroAlunoField, passwordLabel, passwordField, createAccountButton, voltarButton);
+        createAccountLayout.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, numeroAlunoLabel, numeroAlunoField,anoEscolaridadeLabel, anoescolaridadeField, passwordLabel, passwordField, createAccountButton, voltarButton);
 
         Scene createAccountScene = new Scene(createAccountLayout, 1280, 720);
         createAccountStage.setScene(createAccountScene);
@@ -199,10 +216,6 @@ public class Teste extends Application {
         Label numProfessorLabel= new Label("Número de Professor:");
         TextField numProfessorField = new TextField();
         numProfessorField.setPromptText("Escreva o seu número de professor");
-        
-        Label disciplinaLabel = new Label("Disciplina:");
-        TextField disciplinaField = new TextField();
-        disciplinaField.setPromptText("Escreva a disciplina que dá aulas");
 
         Label passwordLabel = new Label("Password:");
         PasswordField passwordField = new PasswordField();
@@ -216,16 +229,11 @@ public class Teste extends Application {
             try {
             	numProfessor = Integer.parseInt(numProfessorField.getText());
             } catch (NumberFormatException ex) {
-                System.out.println("Número de aluno inválido. Por favor, insira um número válido.");
+                System.out.println("Número de professor inválido. Por favor, insira um número válido.");
             }
-            String disciplina = disciplinaField.getText();
-            if (disciplina.isEmpty()) {
-                System.out.println("A disciplina não pode estar vazia.");
-                return; 
-            }
-            String senha = passwordField.getText();
+            String password = passwordField.getText();
 
-            Professor novoProfessor = new Professor(nome, email, numProfessor, disciplina, senha);
+            Professor novoProfessor = new Professor(nome, email, numProfessor,password);
             utilizadores.add(novoProfessor);
             LoginService loginService = new LoginService();
             boolean sucesso = loginService.criarProfessor(novoProfessor);
@@ -248,10 +256,59 @@ public class Teste extends Application {
 
         VBox createAccountLayout = new VBox(10);
         createAccountLayout.setAlignment(Pos.CENTER);
-        createAccountLayout.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, numProfessorLabel, numProfessorField, disciplinaLabel, disciplinaField, passwordLabel, passwordField, createAccountButton, voltarButton);
+        createAccountLayout.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, numProfessorLabel, numProfessorField,passwordLabel, passwordField, createAccountButton, voltarButton);
 
         Scene createAccountScene = new Scene(createAccountLayout, 1280, 720);
         createAccountStage.setScene(createAccountScene);
+    }
+    
+    private void criarContaAdministrador(Stage createAccountStage) {
+    	Label nameLabel = new Label("Nome:");
+        TextField nameField = new TextField();
+        nameField.setPromptText("Escreva o seu nome");
+        
+        Label emailLabel = new Label("Email:");
+        TextField emailField = new TextField();
+        emailField.setPromptText("Escreva o seu email");
+        
+        Label passwordLabel = new Label("Password:");
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Escreva a sua password");
+        
+        Button createAccountButton = new Button("Criar Conta");
+        createAccountButton.setOnAction(e -> {
+            String nome = nameField.getText();
+            String email = emailField.getText();
+            String password = passwordField.getText();
+
+            Administrador novoAdministrador = new Administrador(nome, email, password);
+            utilizadores.add(novoAdministrador);
+            LoginService loginService = new LoginService();
+            boolean sucesso = loginService.criarAdministrador(novoAdministrador);
+            if (sucesso) {
+                System.out.println("Conta de administrador criada com sucesso!");
+                createAccountStage.close(); 
+                telaLogin();
+            } else {
+                System.out.println("Falha ao criar conta de administrador.");
+            }
+            System.out.println("Conta de professor criada: " + novoAdministrador);    //usar o to string da classe Professor em vez do da classe Utilizador
+            createAccountStage.close();
+        });
+
+        Button voltarButton = new Button("Voltar");
+        voltarButton.setOnAction(e -> {
+            createAccountStage.close();
+            primaryStage.show();
+        });
+
+        VBox createAccountLayout = new VBox(10);
+        createAccountLayout.setAlignment(Pos.CENTER);
+        createAccountLayout.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, passwordLabel, passwordField, createAccountButton, voltarButton);
+
+        Scene createAccountScene = new Scene(createAccountLayout, 1280, 720);
+        createAccountStage.setScene(createAccountScene);
+        
     }
     
     

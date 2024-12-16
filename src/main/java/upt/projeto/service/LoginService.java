@@ -1,5 +1,7 @@
 package upt.projeto.service;
 
+import upt.projeto.model.Administrador;
+import upt.projeto.model.Aluno;
 import upt.projeto.model.Login;
 import upt.projeto.model.Professor;
 import upt.projeto.model.RespostaLogin;
@@ -43,6 +45,19 @@ public class LoginService {
         }
     }
     
+    public boolean criarAdministrador(Administrador administrador) {
+    	String url = BASE_URL + "/administrador"; 
+        ResponseEntity<Administrador> response = restTemplate.postForEntity(url, administrador, Administrador.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Administrador criado com sucesso: " + response.getBody());
+            return true; 
+        } else {
+            System.out.println("Falha ao criar administrador: " + response.getStatusCode());
+            return false; 
+        }
+    }
+    
     public boolean criarProfessor(Professor professor) {
         String url = BASE_URL + "/professor"; 
         ResponseEntity<Professor> response = restTemplate.postForEntity(url, professor, Professor.class);
@@ -65,6 +80,19 @@ public class LoginService {
         } else {
             System.out.println("Falha ao obter todos os professores: " + response.getStatusCode());
             return null; 
+        }
+    }
+    
+    public boolean criarAluno(Aluno aluno) {
+        String url = BASE_URL + "/aluno"; 
+        ResponseEntity<Aluno> response = restTemplate.postForEntity(url, aluno, Aluno.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Aluno criado com sucesso: " + response.getBody());
+            return true; 
+        } else {
+            System.out.println("Falha ao criar aluno: " + response.getStatusCode());
+            return false; 
         }
     }
     

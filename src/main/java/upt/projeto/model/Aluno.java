@@ -10,10 +10,11 @@ import jakarta.persistence.Table;
 @PrimaryKeyJoinColumn(name = "idAluno")
 public class Aluno extends Utilizador {
 
-	 public Aluno(String nome, String email, int numAluno, String senha) {
+	 public Aluno(String nome, String email, int numAluno,int anoEscolaridade, String senha) {
 	        super.setNome(nome);
 	        super.setEmail(email);
 	        super.setPassword(senha); 
+	        this.anoEscolaridade = anoEscolaridade;
 	        this.numAluno = numAluno;
 	 }
 	
