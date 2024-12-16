@@ -2,6 +2,9 @@ package upt.projeto.service;
 
 import upt.projeto.model.Administrador;
 import upt.projeto.model.Aluno;
+import upt.projeto.model.AnoEscolaridade;
+import upt.projeto.model.Curso;
+import upt.projeto.model.Disciplina;
 import upt.projeto.model.Login;
 import upt.projeto.model.Professor;
 import upt.projeto.model.RespostaLogin;
@@ -58,6 +61,46 @@ public class LoginService {
         }
     }
     
+    public boolean criarCurso(Curso curso) {
+    	String url = BASE_URL + "/curso"; 
+        ResponseEntity<Curso> response = restTemplate.postForEntity(url, curso, Curso.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Curso criado com sucesso: " + response.getBody());
+            return true; 
+        } else {
+            System.out.println("Falha ao criar curso: " + response.getStatusCode());
+            return false; 
+        }
+    }
+    
+    public boolean criarAnoEscolaridade(AnoEscolaridade anoEscolaridade) {
+    	String url = BASE_URL + "/ano_escolaridade"; 
+        ResponseEntity<AnoEscolaridade> response = restTemplate.postForEntity(url, anoEscolaridade, AnoEscolaridade.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Ano de escolaridade criado com sucesso: " + response.getBody());
+            return true; 
+        } else {
+            System.out.println("Falha ao criar ano de escolaridade: " + response.getStatusCode());
+            return false; 
+        }
+    }
+    
+    public boolean criarDisciplina(Disciplina disciplina) {
+    	String url = BASE_URL + "/disciplina"; 
+        ResponseEntity<Disciplina> response = restTemplate.postForEntity(url, disciplina, Disciplina.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Disciplina criada com sucesso: " + response.getBody());
+            return true; 
+        } else {
+            System.out.println("Falha ao criar disciplina: " + response.getStatusCode());
+            return false; 
+        }
+    }
+    
+    
     public boolean criarProfessor(Professor professor) {
         String url = BASE_URL + "/professor"; 
         ResponseEntity<Professor> response = restTemplate.postForEntity(url, professor, Professor.class);
@@ -104,7 +147,5 @@ public class LoginService {
             return false; 
         }
     }
-    
-    
     
 }

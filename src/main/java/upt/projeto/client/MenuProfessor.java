@@ -3,11 +3,16 @@ package upt.projeto.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import upt.projeto.model.Professor;
@@ -18,7 +23,7 @@ public class MenuProfessor {
 
     private Stage primaryStage; 
     private LoginService loginService;
-    private Utilizador professor;
+    private Professor  professor;
 
     public MenuProfessor() {
         this.primaryStage = primaryStage;
@@ -30,7 +35,7 @@ public class MenuProfessor {
         this.loginService = loginService;
     }
     
-    public void setProfessor(Utilizador professor) {
+    public void setProfessor(Professor  professor) {
         this.professor = professor;
     }
 
@@ -70,29 +75,39 @@ public class MenuProfessor {
     }
     
    
-    private void mostrarDadosPessoais(Utilizador utilizador) {
-        if (utilizador instanceof Professor) {
-            Professor professor = (Professor) utilizador; 
-
+    private void mostrarDadosPessoais(Professor professor) {
+    	if (professor != null) {
             Stage dadosPessoaisStage = new Stage();
             dadosPessoaisStage.setTitle("Dados Pessoais");
+            
+            TableView<Professor> tableView = new TableView<>();
 
-            Label nomeLabel = new Label("Nome: " + professor.getNome());
-            Label emailLabel = new Label("Email: " + professor.getEmail());
-            Label numProfessorLabel = new Label("Número de Professor: " + professor.getNumProfessor());
+            TableColumn<Professor, String> nomeColumn = new TableColumn<>("Nome");
+            nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
+
+            TableColumn<Professor, String> emailColumn = new TableColumn<>("Email");
+            emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+
+            TableColumn<Professor, Integer> numProfessorColumn = new TableColumn<>("Número de Professor");
+            numProfessorColumn.setCellValueFactory(new PropertyValueFactory<>("numProfessor"));
+
+            tableView.getColumns().addAll(nomeColumn, emailColumn, numProfessorColumn);
+
+            ObservableList<Professor> data = FXCollections.observableArrayList(professor); 
+            tableView.setItems(data);
 
             Button voltarButton = new Button("Voltar");
             voltarButton.setOnAction(e -> dadosPessoaisStage.close());
 
             VBox dadosLayout = new VBox(10);
             dadosLayout.setAlignment(Pos.CENTER);
-            dadosLayout.getChildren().addAll(nomeLabel, emailLabel, numProfessorLabel, voltarButton);
+            dadosLayout.getChildren().addAll(tableView, voltarButton);
 
             Scene dadosScene = new Scene(dadosLayout, 400, 300);
             dadosPessoaisStage.setScene(dadosScene);
             dadosPessoaisStage.show();
         } else {
-            System.out.println("O utilizador não é um professor.");
+            System.out.println("Professor não encontrado.");
         }
     }
     

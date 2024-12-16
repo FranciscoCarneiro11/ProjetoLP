@@ -78,15 +78,22 @@ public class Teste extends Application {
 	        }
 	        
 	        LoginService loginService = new LoginService(); 
-	        if(loginService.login(email, password)) {
+	        if (loginService.login(email, password)) {
 	            System.out.println("Login bem sucedido: Email: " + email);
-	            loginStage.close();
+	            loginStage.close(); 
 	            Utilizador utilizador = loginService.getUtilizador(email); 
 	            if (utilizador != null) {		            
 	                if (utilizador.getTipoUtilizador() == Utilizador.TipoUtilizador.professor) {
+	                    Professor professor = (Professor) utilizador; 
 	                    MenuProfessor menuProfessor = new MenuProfessor(primaryStage, loginService);
-	                    menuProfessor.setProfessor(utilizador);
+	                    menuProfessor.setProfessor(professor);
 	                    menuProfessor.start(new Stage());  
+	                }
+	                if (utilizador.getTipoUtilizador() == Utilizador.TipoUtilizador.administrador) {
+	                    Administrador adm = (Administrador) utilizador;
+	                    MenuAdministrador menuAdm = new MenuAdministrador(loginService, primaryStage);
+	                    menuAdm.setAdministrador(adm);
+	                    menuAdm.start(new Stage()); 
 	                }
 	            }
 	        } else {
