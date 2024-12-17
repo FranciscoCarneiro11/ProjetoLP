@@ -91,11 +91,9 @@ public class ProfessorService {
 	}
 	
 	public void associarProfessorADisciplina(Long professorId, Long disciplinaId) {
-	    Professor professor = getProfessorById(professorId)
-	            .orElseThrow(() -> new RuntimeException("Professor não encontrado com ID: " + professorId));
+	    Professor professor = getProfessorById(professorId).orElseThrow(() -> new RuntimeException("Professor não encontrado com ID: " + professorId));
 
-	    Disciplina disciplina = disciplinaService.getDisciplinaById(disciplinaId)
-	            .orElseThrow(() -> new RuntimeException("Disciplina não encontrada com ID: " + disciplinaId));
+	    Disciplina disciplina = disciplinaService.getDisciplinaById(disciplinaId).orElseThrow(() -> new RuntimeException("Disciplina não encontrada com ID: " + disciplinaId));
 
 	    ProfessorDisciplina professorDisciplina = new ProfessorDisciplina();
 	    professorDisciplina.setProfessor(professor);

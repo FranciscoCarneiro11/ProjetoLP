@@ -33,7 +33,6 @@ public class Quiz {
     @OneToMany(mappedBy = "quiz")
     private List<Pergunta> perguntas = new ArrayList<>();
 
-    // Get's e set's
     public int getId() { 
     	return id; 
     }

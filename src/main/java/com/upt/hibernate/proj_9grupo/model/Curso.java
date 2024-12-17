@@ -32,6 +32,7 @@ public class Curso {
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
     private List<AnoEscolaridade> anosEscolaridade = new ArrayList<>();
     
+    
     public Long getId() {
         return id;
     }

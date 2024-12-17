@@ -38,11 +38,19 @@ public class RespostaQuizController {
 	    if (respostaQuiz.getAluno() == null || respostaQuiz.getAluno().getId() <= 0) {
 	        throw new RuntimeException("O aluno deve ser fornecido.");
 	    }
-	    
-	    // Chame o serviço para criar a resposta
+
+	    System.out.println("ID do Aluno: " + respostaQuiz.getAluno().getId());
+
+	    if (respostaQuiz.getQuiz() == null || respostaQuiz.getQuiz().getId() <= 0) {
+	        throw new RuntimeException("O quiz deve ser fornecido.");
+	    }
+
+	    System.out.println("ID do Quiz: " + respostaQuiz.getQuiz().getId());
+
 	    RespostaQuiz novaResposta = respostaQuizService.criarRespostaQuiz(respostaQuiz);
 	    return ResponseEntity.ok(novaResposta);
 	}
+	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> eliminarResposta(@PathVariable Long id) {
 		respostaQuizService.eliminarRespostaQuiz(id);

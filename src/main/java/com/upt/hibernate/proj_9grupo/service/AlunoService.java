@@ -77,7 +77,6 @@ public class AlunoService {
             }
         	aluno.setNome(detalhesAluno.getNome());
             aluno.setEmail(detalhesAluno.getEmail());
-            aluno.setAnoEscolaridade(detalhesAluno.getAnoEscolaridade());
             aluno.setNumAluno(detalhesAluno.getNumAluno());
 
             return alunosRepository.save(aluno);

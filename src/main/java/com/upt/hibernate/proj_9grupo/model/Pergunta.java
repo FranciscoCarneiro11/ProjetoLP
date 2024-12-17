@@ -31,7 +31,6 @@ public class Pergunta {
     @Column(name = "respostaCorreta", nullable = false)
     private String respostaCorreta;
 
-    // Get's e set's
     public int getId() { 
     	return id; 
     }

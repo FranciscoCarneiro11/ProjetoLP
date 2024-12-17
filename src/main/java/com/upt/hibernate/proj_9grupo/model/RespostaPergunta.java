@@ -22,11 +22,6 @@ public class RespostaPergunta {
 
     @Column(name = "resposta", nullable = false)
     private String resposta; 
-
-    @ManyToOne
-    @JoinColumn(name = "fk_aluno", nullable = false) 
-    private Aluno aluno; 
-
    
     public int getId() {
         return id;
@@ -52,11 +47,5 @@ public class RespostaPergunta {
         this.resposta = resposta;
     }
 
-    public Aluno getAluno() {
-        return aluno;
-    }
 
-    public void setAluno(Aluno aluno) {
-        this.aluno = aluno;
-    }
 }

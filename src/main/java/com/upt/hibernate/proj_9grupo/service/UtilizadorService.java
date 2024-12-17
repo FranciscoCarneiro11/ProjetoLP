@@ -72,7 +72,6 @@ public class UtilizadorService {
 			if (existingAluno != null) {
 				existingAluno.setNome(((Aluno) utilizador).getNome());
 	    		existingAluno.setEmail(((Aluno) utilizador).getEmail());
-	    		existingAluno.setAnoEscolaridade(((Aluno) utilizador).getAnoEscolaridade());
 	    		existingAluno.setNumAluno(((Aluno) utilizador).getNumAluno());
 				return alunosRepository.save(existingAluno);
 				}
@@ -107,7 +106,7 @@ public class UtilizadorService {
             Utilizador utilizador = utilizadorOpt.get();
             return utilizador.getPassword().equals(password); 
         }
-        return false; // Usuário não encontrado
+        return false; 
     }
 	
 }

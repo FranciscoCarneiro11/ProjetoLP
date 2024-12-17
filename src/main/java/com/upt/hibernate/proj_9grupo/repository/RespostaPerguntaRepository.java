@@ -11,6 +11,5 @@ import com.upt.hibernate.proj_9grupo.model.RespostaQuiz;
 
 @Repository
 public interface RespostaPerguntaRepository extends JpaRepository<RespostaPergunta, Integer> {
-	List<RespostaPergunta> findByAluno(Aluno aluno);
 	List<RespostaPergunta> findByRespostaQuiz(RespostaQuiz respostaQuiz);
 }

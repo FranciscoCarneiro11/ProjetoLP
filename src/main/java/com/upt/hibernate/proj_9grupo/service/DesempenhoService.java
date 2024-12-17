@@ -26,8 +26,7 @@ public class DesempenhoService {
     }
 	
 	public List<RelatorioDesempenho> criarRelatorioDesempenho(Long quizId) {
-	    Quiz quiz = quizRepository.findById(quizId)
-	            .orElseThrow(() -> new RuntimeException("Quiz não encontrado!"));
+	    Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new RuntimeException("Quiz não encontrado!"));
 
 	    List<RespostaQuiz> respostas = respostaQuizRepository.findByQuiz(quiz);
 	    System.out.println("Respostas encontradas: " + respostas.size());

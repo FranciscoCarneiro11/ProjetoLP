@@ -18,6 +18,10 @@ public class Disciplina {
 
     @Column(nullable = false)
     private String nome;
+    
+    @ManyToOne
+    @JoinColumn(name = "curso_id", nullable = false)
+    private Curso curso;
 
     @ManyToOne
     @JoinColumn(name = "ano_escolaridade_id", nullable = false)
@@ -46,4 +50,14 @@ public class Disciplina {
     public void setAnoEscolaridade(AnoEscolaridade anoEscolaridade) {
         this.anoEscolaridade = anoEscolaridade;
     }
+
+	public Curso getCurso() {
+		return curso;
+	}
+
+	public void setCurso(Curso curso) {
+		this.curso = curso;
+	}
+    
+    
 }
