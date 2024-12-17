@@ -16,21 +16,20 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "curso")
 public class Curso {
-	
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private String nome;
-    
+
     @ManyToOne
     @JoinColumn(name = "administrador_id", nullable = false)
     private Administrador administrador;
 
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
     private List<AnoEscolaridade> anosEscolaridade = new ArrayList<>();
-    
+
     public Curso(String nome, Administrador administrador) {
         this.nome = nome;
         this.administrador = administrador;

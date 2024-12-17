@@ -16,12 +16,11 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "ano_escolaridade")
 public class AnoEscolaridade {
-	
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-	
-	@Column(nullable = false)
+
+    @Column(nullable = false)
     private int ano;
 
     @ManyToOne
@@ -30,6 +29,14 @@ public class AnoEscolaridade {
 
     @OneToMany(mappedBy = "anoEscolaridade", cascade = CascadeType.ALL)
     private List<Disciplina> disciplinas = new ArrayList<>();
+
+    public AnoEscolaridade() {
+    }
+
+    public AnoEscolaridade(int ano, Curso curso) {
+        this.ano = ano;
+        this.curso = curso;
+    }
 	
     public Long getId() {
         return id;

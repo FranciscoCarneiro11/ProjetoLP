@@ -2,6 +2,8 @@ package upt.projeto.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 
@@ -10,24 +12,24 @@ import jakarta.persistence.Table;
 @PrimaryKeyJoinColumn(name = "idAluno")
 public class Aluno extends Utilizador {
 
-	 public Aluno(String nome, String email, int numAluno,int anoEscolaridade, String senha) {
-	        super.setNome(nome);
-	        super.setEmail(email);
-	        super.setPassword(senha); 
-	        this.anoEscolaridade = anoEscolaridade;
-	        this.numAluno = numAluno;
-	 }
-	
-	
-	public Aluno() {
-			
-	}
-		
-	@Column(name = "numAluno", nullable = false)
-	private int numAluno;
+    @Column(name = "numAluno", nullable = false)
+    private int numAluno;
 
-	@Column(name = "anoEscolaridade")
-	private int anoEscolaridade;
+    @ManyToOne 
+    @JoinColumn(name = "curso_id") 
+    private Curso curso;
+
+
+    public Aluno() {
+        super(); 
+    }
+
+    public Aluno(String nome, String email, int numAluno, String senha) {
+        super.setNome(nome);
+        super.setEmail(email);
+        super.setPassword(senha); 
+        this.numAluno = numAluno;
+    }
 
 	public int getNumAluno() {
 		return numAluno;
@@ -37,17 +39,17 @@ public class Aluno extends Utilizador {
 	    this.numAluno = numAluno;
 	}
 
-	public int getAnoEscolaridade() {
-	    return anoEscolaridade;
+	public Curso getCurso() {
+		return curso;
 	}
 
-	public void setAnoEscolaridade(int anoEscolaridade) {
-	    this.anoEscolaridade = anoEscolaridade;
+	public void setCurso(Curso curso) {
+		this.curso = curso;
 	}
 
 	@Override
 	public String toString() {
-		return "Aluno [numAluno=" + numAluno + ", anoEscolaridade=" + anoEscolaridade + ", getId()=" + getId()
+		return "Aluno [numAluno=" + numAluno + ", getId()=" + getId()
 					+ ", getNome()=" + getNome() + ", getTipoUtilizador()=" + getTipoUtilizador() + ", getEmail()="
 					+ getEmail() + "]";
 	}

@@ -18,6 +18,8 @@ import upt.projeto.model.Utilizador;
 import upt.projeto.service.LoginService;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class Teste extends Application {
 
@@ -26,31 +28,37 @@ public class Teste extends Application {
 	private LoginService loginService = new LoginService();
 	
 	@Override
-    public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage; 
-        primaryStage.setTitle("Quiz Educativo");
+	public void start(Stage primaryStage) {
+	    this.primaryStage = primaryStage; 
+	    primaryStage.setTitle("Quiz Educativo");
 
-        Label welcomeLabel = new Label("Bem-vindo ao Quiz Educativo!");
-        welcomeLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;");
+	    Image image = new Image("imagens/quiz-line-computer.png"); 
+	    ImageView imageView = new ImageView(image);
+	    imageView.setFitWidth(100); 
+	    imageView.setPreserveRatio(true); 
 
-        Label choiceLabel = new Label("Selecione:");
-        choiceLabel.setStyle("-fx-font-size: 24px;");
+	    Label welcomeLabel = new Label("Bem-vindo ao Quiz Educativo!");
+	    welcomeLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;");
 
-        Button loginButton = new Button("Login");
-        Button criarContaButton = new Button("Criar Conta");
-        Button exitButton = new Button("Sair");
+	    Label choiceLabel = new Label("Selecione:");
+	    choiceLabel.setStyle("-fx-font-size: 24px;");
 
-        loginButton.setOnAction(e -> telaLogin());
-        criarContaButton.setOnAction(e -> telaCriarConta());
-        exitButton.setOnAction(e -> primaryStage.close());
+	    Button loginButton = new Button("Login");
+	    Button criarContaButton = new Button("Criar Conta");
+	    Button exitButton = new Button("Sair");
 
-        VBox layout = new VBox(10);
-        layout.setAlignment(Pos.CENTER);
-        layout.getChildren().addAll(welcomeLabel, choiceLabel, loginButton, criarContaButton, exitButton);
-        Scene scene = new Scene(layout, 1280, 720);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+	    loginButton.setOnAction(e -> telaLogin());
+	    criarContaButton.setOnAction(e -> telaCriarConta());
+	    exitButton.setOnAction(e -> primaryStage.close());
+
+	    VBox layout = new VBox(10);
+	    layout.setAlignment(Pos.CENTER);
+	    layout.setStyle("-fx-background-color: #718063"); 
+	    layout.getChildren().addAll(imageView, welcomeLabel, choiceLabel, loginButton, criarContaButton, exitButton); 
+	    Scene scene = new Scene(layout, 630, 360);
+	    primaryStage.setScene(scene);
+	    primaryStage.show();
+	}
 
 	private void telaLogin() {
 	    Stage loginStage = new Stage();
@@ -95,6 +103,12 @@ public class Teste extends Application {
 	                    menuAdm.setAdministrador(adm);
 	                    menuAdm.start(new Stage()); 
 	                }
+	                if (utilizador.getTipoUtilizador() == Utilizador.TipoUtilizador.aluno) {
+	                    Aluno aluno = (Aluno) utilizador;
+	                    MenuAluno menuAluno = new MenuAluno(primaryStage, loginService);
+	                    menuAluno.setAluno(aluno);
+	                    menuAluno.start(new Stage()); 
+	                }
 	            }
 	        } else {
 	            errorMessageLabel.setText("Email ou password incorretos.");
@@ -109,7 +123,7 @@ public class Teste extends Application {
 
 	    VBox loginLayout = new VBox(10); 
 	    loginLayout.setAlignment(Pos.CENTER); 
-	    loginLayout.setStyle("-fx-padding: 20"); 
+	    loginLayout.setStyle("-fx-padding: 20; -fx-background-color: #718063;"); 
 	    loginLayout.getChildren().addAll(emailLabel, emailField, passwordLabel, passwordField, errorMessageLabel, loginButton, voltarButton);
 
 	    Scene loginScene = new Scene(loginLayout, 400, 300); 
@@ -119,33 +133,44 @@ public class Teste extends Application {
 	}
 
 
-    private void telaCriarConta() {
-    	Stage createAccountStage = new Stage();
-        createAccountStage.setTitle("Criar Conta");
-        
-        Button alunoButton = new Button("Criar Conta como Aluno");
-        Button professorButton = new Button("Criar Conta como Professor");
-        Button administradorButton = new Button("Criar Conta como Administrador");
-        
-        alunoButton.setOnAction(e -> criarContaAluno(createAccountStage));
-        professorButton .setOnAction(e -> criarContaProfessor(createAccountStage));
-        administradorButton .setOnAction(e -> criarContaAdministrador(createAccountStage));
-       
-        Button voltarButton = new Button("Voltar");
-        voltarButton.setOnAction(e -> {
-        	createAccountStage.close(); 
-            primaryStage.show(); 
-        });
-        
-        VBox selectionLayout = new VBox(10);
-        selectionLayout.setAlignment(Pos.CENTER);
-        selectionLayout.getChildren().addAll(alunoButton, professorButton, administradorButton);
+	private void telaCriarConta() {
+	    Stage createAccountStage = new Stage();
+	    createAccountStage.setTitle("Criar Conta");
 
-        Scene selectionScene = new Scene(selectionLayout, 1280, 720);
-        createAccountStage.setScene(selectionScene);
-        createAccountStage.show();
-        primaryStage.hide(); 
-    }
+	    GridPane createAccountLayout = new GridPane();
+	    createAccountLayout.setVgap(15);
+	    createAccountLayout.setHgap(15);
+	    createAccountLayout.setAlignment(Pos.CENTER);
+	    createAccountLayout.setStyle("-fx-background-color: #718063;"); 
+
+	    Label titleLabel = new Label("Escolha o tipo de conta:");
+	    titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");
+
+	    Button alunoButton = new Button("Criar Conta como Aluno");
+	    Button professorButton = new Button("Criar Conta como Professor");
+	    Button administradorButton = new Button("Criar Conta como Administrador");
+
+	    alunoButton.setOnAction(e -> criarContaAluno(createAccountStage));
+	    professorButton.setOnAction(e -> criarContaProfessor(createAccountStage));
+	    administradorButton.setOnAction(e -> criarContaAdministrador(createAccountStage));
+
+	    Button voltarButton = new Button("Voltar");
+	    voltarButton.setOnAction(e -> {
+	        createAccountStage.close();
+	        primaryStage.show();
+	    });
+
+	    createAccountLayout.add(titleLabel, 0, 0, 2, 1);
+	    createAccountLayout.add(alunoButton, 0, 1);
+	    createAccountLayout.add(professorButton, 0, 2);
+	    createAccountLayout.add(administradorButton, 0, 3);
+	    createAccountLayout.add(voltarButton, 0, 4);
+
+	    Scene selectionScene = new Scene(createAccountLayout, 400, 300);
+	    createAccountStage.setScene(selectionScene);
+	    createAccountStage.show();
+	    primaryStage.hide();
+	}
 
     
     public void criarContaAluno(Stage createAccountStage) {
@@ -153,6 +178,7 @@ public class Teste extends Application {
         createAccountLayout.setVgap(10);
         createAccountLayout.setHgap(10); 
         createAccountLayout.setAlignment(Pos.CENTER); 
+        createAccountLayout.setStyle("-fx-background-color: #718063;");
 
         Label nameLabel = new Label("Nome:");
         TextField nameField = new TextField();
@@ -166,10 +192,6 @@ public class Teste extends Application {
         TextField numeroAlunoField = new TextField();
         numeroAlunoField.setPromptText("Escreva o seu número de aluno");
 
-        Label anoEscolaridadeLabel = new Label("Ano de escolaridade:");
-        TextField anoEscolaridadeField = new TextField();
-        anoEscolaridadeField.setPromptText("Escreva o seu ano de escolaridade");
-
         Label passwordLabel = new Label("Password:");
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Escreva a sua password");
@@ -179,10 +201,9 @@ public class Teste extends Application {
             String nome = nameField.getText();
             String email = emailField.getText();
             int numeroAluno = Integer.parseInt(numeroAlunoField.getText());
-            int anoEscolaridade = Integer.parseInt(anoEscolaridadeField.getText());
             String password = passwordField.getText();
 
-            Aluno novoAluno = new Aluno(nome, email, numeroAluno, anoEscolaridade, password);
+            Aluno novoAluno = new Aluno(nome, email, numeroAluno, password);
             utilizadores.add(novoAluno);
             LoginService loginService = new LoginService();
             boolean sucesso = loginService.criarAluno(novoAluno);
@@ -208,14 +229,12 @@ public class Teste extends Application {
         createAccountLayout.add(emailField, 1, 1); 
         createAccountLayout.add(numeroAlunoLabel, 0, 2);
         createAccountLayout.add(numeroAlunoField, 1, 2); 
-        createAccountLayout.add(anoEscolaridadeLabel, 0, 3); 
-        createAccountLayout.add(anoEscolaridadeField, 1, 3); 
-        createAccountLayout.add(passwordLabel, 0, 4); 
-        createAccountLayout.add(passwordField, 1, 4); 
-        createAccountLayout.add(createAccountButton, 1, 5); 
-        createAccountLayout.add(voltarButton, 1, 6); 
+        createAccountLayout.add(passwordLabel, 0, 1); 
+        createAccountLayout.add(passwordField, 1, 3); 
+        createAccountLayout.add(createAccountButton, 0, 4); 
+        createAccountLayout.add(voltarButton, 1, 4); 
 
-        Scene createAccountScene = new Scene(createAccountLayout, 1280, 720);
+        Scene createAccountScene = new Scene(createAccountLayout, 630, 360);
         createAccountStage.setScene(createAccountScene);
         createAccountStage.show();
     }
@@ -225,6 +244,7 @@ public class Teste extends Application {
         createAccountLayout.setVgap(10); 
         createAccountLayout.setHgap(10);
         createAccountLayout.setAlignment(Pos.CENTER); 
+        createAccountLayout.setStyle("-fx-background-color: #718063;");
 
         Label nameLabel = new Label("Nome:");
         TextField nameField = new TextField();
@@ -280,16 +300,17 @@ public class Teste extends Application {
         createAccountLayout.add(createAccountButton, 1, 4); 
         createAccountLayout.add(voltarButton, 1, 5); 
 
-        Scene createAccountScene = new Scene(createAccountLayout, 1280, 720);
+        Scene createAccountScene = new Scene(createAccountLayout, 630, 360);
         createAccountStage.setScene(createAccountScene);
         createAccountStage.show();
     }
     
     private void criarContaAdministrador(Stage createAccountStage) {
         GridPane createAccountLayout = new GridPane();
-        createAccountLayout.setVgap(10); 				//Utilizado para se colocar qual o espaçamento que queremos entre cada Label
+        createAccountLayout.setVgap(10); 				
         createAccountLayout.setHgap(10); 
         createAccountLayout.setAlignment(Pos.CENTER); 
+        createAccountLayout.setStyle("-fx-background-color: #718063;");
 
         Label nameLabel = new Label("Nome:");
         TextField nameField = new TextField();
@@ -338,7 +359,7 @@ public class Teste extends Application {
         createAccountLayout.add(createAccountButton, 1, 3); 
         createAccountLayout.add(voltarButton, 1, 4); 
 
-        Scene createAccountScene = new Scene(createAccountLayout, 1280, 720);
+        Scene createAccountScene = new Scene(createAccountLayout, 630, 360);
         createAccountStage.setScene(createAccountScene);
         createAccountStage.show();
     }
