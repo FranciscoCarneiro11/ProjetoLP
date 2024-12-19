@@ -1,5 +1,6 @@
 package upt.projeto.client;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,7 +77,7 @@ public class MenuProfessor {
         });
         
         editarQuizButton.setOnAction(e->{
-        	//editarQuiz();
+        	editarQuiz();
         });        
         
         verQuizzesButton.setOnAction(e->{
@@ -292,6 +293,134 @@ public class MenuProfessor {
         criarQuizStage.setScene(criarQuizScene);
         criarQuizStage.show();
     }
+    
+    private void editarQuiz() {
+        List<QuizDTO> todosQuizzes = loginService.getTodosQuizzes();
+        List<QuizDTO> quizzesDoProfessor = new ArrayList<>();
+
+        for (QuizDTO quiz : todosQuizzes) {
+            if (quiz.getProfessorId() != null && quiz.getProfessorId().equals((long) professor.getId())) {
+                quizzesDoProfessor.add(quiz);
+            }
+        }
+
+        if (quizzesDoProfessor.isEmpty()) {
+            System.out.println("Nenhum quiz encontrado para este professor!!");
+            return;
+        }
+
+        Stage editarQuizStage = new Stage();
+        editarQuizStage.setTitle("Editar Quizzes");
+
+        VBox layout = new VBox(10);
+        layout.setAlignment(Pos.CENTER);
+
+        Label selecionarQuizLabel = new Label("Selecione o Quiz que pretende editar:");
+        ChoiceBox<QuizDTO> quizChoiceBox = new ChoiceBox<>();
+        quizChoiceBox.getItems().addAll(quizzesDoProfessor);
+        quizChoiceBox.getSelectionModel().selectFirst();
+
+        Button editarButton = new Button("Editar");
+        editarButton.setStyle("-fx-text-fill: blue;");
+        editarButton.setOnAction(e -> {
+            QuizDTO quizSelecionado = quizChoiceBox.getSelectionModel().getSelectedItem();
+            if (quizSelecionado != null && quizSelecionado.getId() != null) {
+                editarPerguntas(quizSelecionado);
+            } else {
+                System.out.println("ID do quiz não encontrado!!");
+            }
+        });
+
+        Button voltarButton = new Button("Voltar");
+        voltarButton.setStyle("-fx-text-fill: red;");
+        voltarButton.setOnAction(e -> editarQuizStage.close());
+
+        layout.getChildren().addAll(selecionarQuizLabel, quizChoiceBox, editarButton, voltarButton);
+
+        Scene scene = new Scene(layout, 640, 360);
+        editarQuizStage.setScene(scene);
+        editarQuizStage.show();
+    }
+
+
+
+    private void editarPerguntas(QuizDTO quizSelecionado) {
+        if (quizSelecionado.getId() == null || quizSelecionado.getId() <= 0) {
+            System.out.println("ID do quiz não encontrado. Não é possível editar perguntas!!");
+            return;
+        }
+
+        Stage editarPerguntasStage = new Stage();
+        editarPerguntasStage.setTitle("Editar Perguntas para o Quiz: " + quizSelecionado.getTitulo());
+
+        VBox layout = new VBox(10);
+        layout.setAlignment(Pos.CENTER);
+
+        Label questaoLabel = new Label("Escreva a Pergunta:");
+        TextField questaoField = new TextField();
+
+        Label opcaoALabel = new Label("Opção A:");
+        TextField opcaoAField = new TextField();
+
+        Label opcaoBLabel = new Label("Opção B:");
+        TextField opcaoBField = new TextField();
+
+        Label opcaoCLabel = new Label("Opção C:");
+        TextField opcaoCField = new TextField();
+
+        Label opcaoDLabel = new Label("Opção D:");
+        TextField opcaoDField = new TextField();
+
+        Label respostaCorretaLabel = new Label("Resposta Correta:");
+        TextField respostaCorretaField = new TextField();
+
+        Button salvarButton = new Button("Guardar Pergunta");
+        salvarButton.setOnAction(e -> {
+            String questao = questaoField.getText();
+            String opcaoA = opcaoAField.getText();
+            String opcaoB = opcaoBField.getText();
+            String opcaoC = opcaoCField.getText();
+            String opcaoD = opcaoDField.getText();
+            String respostaCorreta = respostaCorretaField.getText();
+
+            if (questao.isEmpty() || opcaoA.isEmpty() || opcaoB.isEmpty() || opcaoC.isEmpty() || opcaoD.isEmpty() || respostaCorreta.isEmpty()) {
+                System.out.println("Todos os campos devem ser preenchidos!");
+                return;
+            }
+
+            Pergunta pergunta = new Pergunta();
+            pergunta.setQuestao(questao);
+            pergunta.setOpcaoA(opcaoA);
+            pergunta.setOpcaoB(opcaoB);
+            pergunta.setOpcaoC(opcaoC);
+            pergunta.setOpcaoD(opcaoD);
+            pergunta.setRespostaCorreta(respostaCorreta);
+
+            System.out.println("Pergunta a ser enviada: " + pergunta);
+
+            boolean sucesso = loginService.editarQuiz(quizSelecionado.getId(), pergunta, (long) professor.getId());
+
+            if (sucesso) {
+                System.out.println("Pergunta adicionada com sucesso ao quiz!");
+            } else {
+                System.out.println("Falha ao adicionar a pergunta.");
+            }
+            editarPerguntasStage.close();
+        });
+
+
+        Button voltarButton = new Button("Voltar");
+        voltarButton.setStyle("-fx-text-fill: red;");
+        voltarButton.setOnAction(e -> editarPerguntasStage.close());
+
+        layout.getChildren().addAll(questaoLabel, questaoField,opcaoALabel, opcaoAField,opcaoBLabel, opcaoBField, opcaoCLabel, opcaoCField,opcaoDLabel, opcaoDField,respostaCorretaLabel, respostaCorretaField,salvarButton, voltarButton
+        );
+
+        Scene scene = new Scene(layout, 640, 480);
+        editarPerguntasStage.setScene(scene);
+        editarPerguntasStage.show();
+    }
+
           
     private void verQuizzes() {
         Stage mostrarQuizzesStage = new Stage();
@@ -318,10 +447,5 @@ public class MenuProfessor {
         mostrarQuizzesStage.setScene(scene);
         mostrarQuizzesStage.show();
     }
-
-
-
-
-    
-    
+ 
 }

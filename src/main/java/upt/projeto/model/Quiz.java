@@ -69,6 +69,10 @@ public class Quiz {
 	public void setDisciplina(Disciplina disciplina) {
 		this.disciplina = disciplina;
 	}
+	@Override
+	public String toString() {
+		return "Quiz: id:" + id + ", Titulo:" + titulo + " Disciplina:" + disciplina +"]";
+	}
 	
 	
 }

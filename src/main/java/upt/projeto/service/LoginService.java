@@ -24,6 +24,7 @@ import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -177,31 +178,43 @@ public class LoginService {
     }
 
     
-    public boolean editarQuiz(int quizId, Pergunta pergunta, Long professorId) {
-      
-    	return false;
+    public boolean editarQuiz(Long quizId, Pergunta pergunta, Long professorId) {
+        String url = BASE_URL + "/pergunta/" + quizId + "?professorId=" + professorId;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Pergunta> request = new HttpEntity<>(pergunta, headers);
+        try {
+            ResponseEntity<Pergunta> response = restTemplate.postForEntity(url, request, Pergunta.class);
+            return response.getStatusCode().is2xxSuccessful();
+        } catch (HttpClientErrorException e) {
+            System.out.println("Erro ao editar o quiz: " + e.getResponseBodyAsString());
+            return false;
+        } catch (Exception e) {
+            System.out.println("Erro inesperado: " + e.getMessage());
+            return false;
+        }
     }
-    
+
+
     public List<QuizDTO> getTodosQuizzes() {
         String url = BASE_URL + "/quiz";
-
-        ResponseEntity<List<QuizDTO>> response = restTemplate.exchange(url,HttpMethod.GET,null,new ParameterizedTypeReference<List<QuizDTO>>() {});
-
+        ResponseEntity<List<QuizDTO>> response = restTemplate.exchange(url, HttpMethod.GET,null,new ParameterizedTypeReference<List<QuizDTO>>() {});
         if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();
+            List<QuizDTO> quizzes = response.getBody();
+            if (quizzes != null) {
+                for (QuizDTO quiz : quizzes) {
+                    System.out.println("Quiz encontrado: " + quiz.getTitulo() + " com ID: " + quiz.getId());
+                }
+            }
+            return quizzes;
         } else {
             System.out.println("Falha ao obter todos os quizzes: " + response.getStatusCode());
             return new ArrayList<>();
         }
     }
 
-    public Professor getDadosProfessor(String email) {
-        Utilizador utilizador = getUtilizador(email);
-        if (utilizador instanceof Professor) {
-            return (Professor) utilizador; 
-        }
-        return null;
-    }
     
     
     public List<DisciplinaDTO> getTodasDisciplinas() {
