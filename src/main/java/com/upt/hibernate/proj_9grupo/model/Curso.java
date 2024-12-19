@@ -3,6 +3,11 @@ package com.upt.hibernate.proj_9grupo.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,22 +19,23 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+
 @Entity
 @Table(name = "curso")
 public class Curso {
-	
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private String nome;
-    
+
     @ManyToOne
     @JoinColumn(name = "administrador_id", nullable = false)
     private Administrador administrador;
 
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<AnoEscolaridade> anosEscolaridade = new ArrayList<>();
     
     

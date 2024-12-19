@@ -23,6 +23,10 @@ public class CursoService {
         return cursoRepository.findByAdministrador(administrador);
     }
 	
+	public List<Curso> listarTodosCursos() {
+        return cursoRepository.findAll(); 
+    }
+	
 	 public List<Curso> getAllCursos() {
 		 return cursoRepository.findAll();
 	 }

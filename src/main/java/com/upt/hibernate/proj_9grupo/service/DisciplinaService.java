@@ -32,9 +32,9 @@ public class DisciplinaService {
 	    return disciplinaRepository.save(disciplina);
 	}
 
-    public List<Disciplina> listarDisciplinasPorAno(AnoEscolaridade anoEscolaridade) {
-        return disciplinaRepository.findByAnoEscolaridade(anoEscolaridade);
-    }
+	public List<Disciplina> listarTodasDisciplinas() {
+	    return disciplinaRepository.findAll(); 
+	}
     
     public Optional<Disciplina> getDisciplinaById(Long id) {
         return disciplinaRepository.findById(id);

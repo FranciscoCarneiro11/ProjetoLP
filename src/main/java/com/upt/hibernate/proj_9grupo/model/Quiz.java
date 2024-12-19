@@ -1,6 +1,12 @@
 package com.upt.hibernate.proj_9grupo.model;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,6 +20,7 @@ import java.util.ArrayList;
 
 @Entity
 @Table(name = "quiz")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +35,11 @@ public class Quiz {
     
     @ManyToOne
     @JoinColumn(name = "disciplina_id", nullable = false) 
+    @JsonManagedReference
     private Disciplina disciplina;
 
     @OneToMany(mappedBy = "quiz")
+    @JsonBackReference
     private List<Pergunta> perguntas = new ArrayList<>();
 
     public int getId() { 

@@ -1,9 +1,15 @@
 package com.upt.hibernate.proj_9grupo.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.*;
+
 
 @Entity
 @Table(name = "pergunta")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Pergunta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +32,7 @@ public class Pergunta {
     
     @ManyToOne
     @JoinColumn(name = "quiz_id")
+    @JsonManagedReference 
     private Quiz quiz;
     
     @Column(name = "respostaCorreta", nullable = false)

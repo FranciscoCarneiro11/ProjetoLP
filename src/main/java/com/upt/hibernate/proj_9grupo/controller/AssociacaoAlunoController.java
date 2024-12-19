@@ -6,6 +6,7 @@ import com.upt.hibernate.proj_9grupo.model.Disciplina;
 import com.upt.hibernate.proj_9grupo.service.AssociacaoAlunoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +31,9 @@ public class AssociacaoAlunoController {
         return ResponseEntity.ok(disciplinas);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AssociacaoAluno> criarAssociacaoAluno(@RequestBody AssociacaoAluno associacao) {
+        System.out.println("Recebido: " + associacao);
         AssociacaoAluno novaAssociacao = associacaoAlunoService.salvarAssociacaoAluno(associacao);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaAssociacao);
     }

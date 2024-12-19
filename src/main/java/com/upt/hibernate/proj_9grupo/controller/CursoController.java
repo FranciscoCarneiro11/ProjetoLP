@@ -22,6 +22,11 @@ public class CursoController {
 	  @Autowired
 	  private CursoService cursoService;
 	  
+	  @GetMapping("/todos")
+	    public List<Curso> listarTodosCursos() {
+	        return cursoService.listarTodosCursos();
+	    }
+	  
 	  @GetMapping
 	  public List<Curso> listarCursosPorAdministrador(@RequestParam int administradorId) {
 		  Administrador administrador = new Administrador(); 
@@ -33,7 +38,6 @@ public class CursoController {
 	  public Curso criarCurso(@RequestBody Curso curso) {
 		  Curso novoCurso = cursoService.criarCurso(curso);
 	      System.out.println("Administrador criado com o nome: " + novoCurso.getNome());
-	        
 	      return novoCurso;
 	  }
 	  

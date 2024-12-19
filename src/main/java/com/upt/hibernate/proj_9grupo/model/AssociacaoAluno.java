@@ -2,6 +2,9 @@ package com.upt.hibernate.proj_9grupo.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,6 +25,7 @@ public class AssociacaoAluno {
 
     @ManyToOne
     @JoinColumn(name = "aluno_id", nullable = false)
+    @JsonManagedReference("alunoReference") 
     private Aluno aluno;
 
     @ManyToOne
@@ -38,6 +42,7 @@ public class AssociacaoAluno {
         joinColumns = @JoinColumn(name = "associacao_aluno_id"),
         inverseJoinColumns = @JoinColumn(name = "disciplina_id")
     )
+    @JsonBackReference("disciplinasReference") 
     private List<Disciplina> disciplinas;
 
 
