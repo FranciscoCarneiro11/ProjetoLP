@@ -1,13 +1,16 @@
 C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\client\MenuProfessor.java
 C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\model\Curso.java
 C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\model\Professor.java
+C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\modelDTO\QuizDTO.java
 C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\service\LoginService.java
 C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\model\AssociacaoAluno.java
 C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\client\Teste.java
+C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\model\RespostaPergunta.java
+C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\modelDTO\DisciplinaDTO.java
 C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\model\Aluno.java
-C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\service\AlunoService.java
 C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\model\Utilizador.java
 C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\client\MenuAdministrador.java
+C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\model\RespostaQuiz.java
 C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\model\Pergunta.java
 C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\model\Quiz.java
 C:\Users\Admin\Desktop\Eclipse\projeto_gr9\src\main\java\upt\projeto\model\Login.java
