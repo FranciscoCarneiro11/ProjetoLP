@@ -12,6 +12,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "disciplina")
 public class Disciplina {
@@ -57,4 +60,12 @@ public class Disciplina {
     public void setAnoEscolaridade(AnoEscolaridade anoEscolaridade) {
         this.anoEscolaridade = anoEscolaridade;
     }
+
+	@Override
+	public String toString() {
+		return this.nome;
+	}
+    
+    
 }
+

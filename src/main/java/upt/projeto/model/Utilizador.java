@@ -95,8 +95,7 @@ public abstract class Utilizador {
 
 	@Override
 	public String toString() {
-		return "Utilizador [id=" + id + ", nome=" + nome + ", email=" + email + ", tipoUtilizador=" + tipoUtilizador
-				+ "]";
+		return "Utilizador: Id=" + id + ", Nome:" + nome + ", Email:" + email + ", Tipo de utilizador:" + tipoUtilizador+ "]";
 	}
 	
 }

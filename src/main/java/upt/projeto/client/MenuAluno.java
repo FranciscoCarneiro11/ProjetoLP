@@ -61,9 +61,11 @@ public class MenuAluno {
 	    	 verAlunos();
 	     });
 	     
-	     associarAlunoButton.setOnAction(e->{
-	    	 associarAluno();
+	     /*
+	      * associarAlunoButton.setOnAction(e->{
+	      *  associarAluno();
 	     });
+	      */
 	     
 	     logoutButton.setOnAction(e -> {
 	    	 menuAlunoStage.close(); 
@@ -154,62 +156,7 @@ public class MenuAluno {
 		    alunosStage.show();
 		}
 	 
-	 private void associarAluno() {
-		    Stage associarStage = new Stage();
-		    associarStage.setTitle("Associar Aluno a Curso e Disciplinas");
-
-		    VBox layout = new VBox(10);
-		    layout.setAlignment(Pos.CENTER);
-
-		    ComboBox<Aluno> alunoComboBox = new ComboBox<>();
-		    alunoComboBox.getItems().addAll(loginService.getTodosAlunos());
-
-		    ComboBox<Curso> cursoComboBox = new ComboBox<>();
-		    cursoComboBox.getItems().addAll(loginService.getTodosCursos());
-
-		    ComboBox<AnoEscolaridade> anoComboBox = new ComboBox<>();
-
-		    ListView<Disciplina> disciplinasListView = new ListView<>();
-		    disciplinasListView.getItems().addAll(loginService.getTodasDisciplinas());
-
-		    cursoComboBox.setOnAction(e -> {
-		        Curso cursoSelecionado = cursoComboBox.getValue();
-		        if (cursoSelecionado != null) {
-		            List<AnoEscolaridade> anosEscolaridade = loginService.getAnosEscolaridadePorCurso(cursoSelecionado.getId());
-		            anoComboBox.getItems().clear();
-		            anoComboBox.getItems().addAll(anosEscolaridade);
-		        }
-		    });
-
-		    Button associarButton = new Button("Associar");
-		    associarButton.setOnAction(e -> {
-		        Aluno alunoSelecionado = alunoComboBox.getValue();
-		        Curso cursoSelecionado = cursoComboBox.getValue();
-		        AnoEscolaridade anoSelecionado = anoComboBox.getValue();
-		        List<Disciplina> disciplinasSelecionadas = disciplinasListView.getSelectionModel().getSelectedItems();
-
-		        if (alunoSelecionado != null && cursoSelecionado != null && anoSelecionado != null && !disciplinasSelecionadas.isEmpty()) {
-		            boolean sucesso = loginService.associarAluno(alunoSelecionado, cursoSelecionado, anoSelecionado, disciplinasSelecionadas);
-		            if (sucesso) {
-		                System.out.println("Associação criada com sucesso!");
-		                associarStage.close();
-		            } else {
-		                System.out.println("Falha ao criar a associação.");
-		            }
-		        } else {
-		            System.out.println("Por favor, selecione todos os campos.");
-		        }
-		    });
-
-		    layout.getChildren().addAll(new Label("Selecionar Aluno:"), alunoComboBox,
-		            new Label("Selecionar Curso:"), cursoComboBox,
-		            new Label("Selecionar Ano de Escolaridade:"), anoComboBox,
-		            new Label("Selecionar Disciplinas:"), disciplinasListView,
-		            associarButton);
-
-		    Scene scene = new Scene(layout, 640, 360);
-		    associarStage.setScene(scene);
-		    associarStage.show();
-		}
+	 
+		    
 
 }

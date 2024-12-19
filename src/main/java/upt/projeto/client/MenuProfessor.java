@@ -1,7 +1,9 @@
 package upt.projeto.client;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -16,9 +18,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import upt.projeto.model.Disciplina;
+import upt.projeto.modelDTO.DisciplinaDTO;
 import upt.projeto.model.Pergunta;
 import upt.projeto.model.Professor;
 import upt.projeto.model.Quiz;
+import upt.projeto.modelDTO.QuizDTO;
 import upt.projeto.service.LoginService;
 
 public class MenuProfessor {
@@ -50,8 +54,10 @@ public class MenuProfessor {
         Button associarDisciplinaButton = new Button("Associar disciplina ao professor");
         Button criarQuizButton = new Button("Criar Quiz");
         Button editarQuizButton = new Button("Editar Quiz");
+        Button verQuizzesButton = new Button("Ver quizzes criados");
         Button verRespostasButton = new Button("Ver Respostas dos Alunos");
         Button logoutButton = new Button("Sair");
+        logoutButton.setStyle("-fx-text-fill: red;");
         
         verDadosButton.setOnAction(e ->{
         	mostrarDadosPessoais(professor);
@@ -70,17 +76,23 @@ public class MenuProfessor {
         });
         
         editarQuizButton.setOnAction(e->{
-        	editarQuiz();
+        	//editarQuiz();
         });        
+        
+        verQuizzesButton.setOnAction(e->{
+            verQuizzes();
+        });
+        
+        
         logoutButton.setOnAction(e -> {
             menuProfStage.close(); 
-            primaryStage.show(); 
+            primaryStage.show();     
         });
 
         VBox layout = new VBox(10);
         layout.setAlignment(Pos.CENTER);
         layout.setStyle("-fx-background-color: #718063"); 
-        layout.getChildren().addAll(welcomeLabel, verDadosButton, verProfessoresButton,associarDisciplinaButton, criarQuizButton,editarQuizButton, verRespostasButton, logoutButton);
+        layout.getChildren().addAll(welcomeLabel, verDadosButton, verProfessoresButton,associarDisciplinaButton, criarQuizButton, editarQuizButton, verQuizzesButton, verRespostasButton, logoutButton);
 
         Scene scene = new Scene(layout, 854, 480);
         menuProfStage.setScene(scene);
@@ -106,10 +118,11 @@ public class MenuProfessor {
 
             tableView.getColumns().addAll(nomeColuna, emailColuna, numProfessorColuna);
 
-            ObservableList<Professor> data = FXCollections.observableArrayList(professor); 
+            ObservableList<Professor> data = FXCollections.observableArrayList(professor);    //utilizado para fornecer apenas os dados do professor que deu login
             tableView.setItems(data);
 
             Button voltarButton = new Button("Voltar");
+            voltarButton.setStyle("-fx-text-fill: red;");
             voltarButton.setOnAction(e -> dadosPessoaisStage.close());
 
             VBox dadosLayout = new VBox(10);
@@ -125,35 +138,43 @@ public class MenuProfessor {
     }
     
     private void verProfessores() {
-    	List<Professor> professores = loginService.getTodosProfessores();
-    	
-    	Stage professoresStage = new Stage();
+        List<Professor> professores = loginService.getTodosProfessores();
+
+        Stage professoresStage = new Stage();
         professoresStage.setTitle("Lista de Professores");
-        
-        VBox professoresLayout = new VBox(10);
-        professoresLayout.setAlignment(Pos.CENTER);
-        
+
+        TableView<Professor> tableView = new TableView<>();
+
+        TableColumn<Professor, String> nomeColuna = new TableColumn<>("Nome");
+        nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
+
+        TableColumn<Professor, String> emailColuna = new TableColumn<>("Email");
+        emailColuna.setCellValueFactory(new PropertyValueFactory<>("email"));
+
+        TableColumn<Professor, Integer> numeroColuna = new TableColumn<>("Número de Professor");
+        numeroColuna.setCellValueFactory(new PropertyValueFactory<>("numProfessor"));
+
+        tableView.getColumns().addAll(nomeColuna, emailColuna, numeroColuna);
+
         if (professores != null && !professores.isEmpty()) {
-            for (Professor professor : professores) {
-                Label professorLabel = new Label("Nome: " + professor.getNome() + ", Email: " + professor.getEmail() + ", Número: " + professor.getNumProfessor());
-                professoresLayout.getChildren().add(professorLabel);
-            }
+            tableView.getItems().addAll(professores);
         } else {
-            Label noProfessoresLabel = new Label("Nenhum professor encontrado!");
-            professoresLayout.getChildren().add(noProfessoresLabel);
+            System.out.println("Nenhum professor encontrado!");
         }
-        
+
         Button voltarButton = new Button("Voltar");
-        voltarButton.setStyle("-fx-text-fill: red;"); 
-        voltarButton.setOnAction(e -> {
-            professoresStage.close(); 
-        });
-        
-        
-        Scene professoresScene = new Scene(professoresLayout, 1280, 720);
-        professoresStage.setScene(professoresScene);
+        voltarButton.setStyle("-fx-text-fill: red;");
+        voltarButton.setOnAction(e -> professoresStage.close());
+
+        VBox layout = new VBox(10);
+        layout.setAlignment(Pos.CENTER);
+        layout.getChildren().addAll(tableView, voltarButton);
+
+        Scene scene = new Scene(layout, 640, 400);
+        professoresStage.setScene(scene);
         professoresStage.show();
     }
+
     
     private void associarDisciplinaProfessor() {
         Stage associarDisciplinaStage = new Stage();
@@ -169,7 +190,14 @@ public class MenuProfessor {
 
         Label disciplinaLabel = new Label("Selecione a Disciplina:");
         ChoiceBox<Disciplina> disciplinaChoiceBox = new ChoiceBox<>();
-        disciplinaChoiceBox.getItems().addAll(loginService.getTodasDisciplinas());
+        List<DisciplinaDTO> disciplinasDTO = loginService.getTodasDisciplinas();
+
+        for (DisciplinaDTO dto : disciplinasDTO) {
+            Disciplina disciplina = new Disciplina();
+            disciplina.setId(dto.getId());
+            disciplina.setNome(dto.getNome());
+            disciplinaChoiceBox.getItems().add(disciplina);
+        }
         disciplinaChoiceBox.getSelectionModel().selectFirst();
 
         Button associarButton = new Button("Associar");
@@ -178,31 +206,34 @@ public class MenuProfessor {
             Disciplina disciplinaSelecionada = disciplinaChoiceBox.getSelectionModel().getSelectedItem();
 
             if (professorSelecionado != null && disciplinaSelecionada != null) {
-                Long professorId = (long) professorSelecionado.getId(); 
-                Long disciplinaId = disciplinaSelecionada.getId(); 
- 
-                System.out.println("Associando disciplina ID: " + disciplinaId + " ao professor ID: " + professorId);
+                Long professorId = (long) professorSelecionado.getId();
+                Long disciplinaId = disciplinaSelecionada.getId();
+
+                System.out.println("A associar disciplina ID: " + disciplinaId + " ao professor ID: " + professorId);
 
                 boolean sucesso = loginService.associarDisciplinaProfessor(professorId, disciplinaId);
                 if (sucesso) {
-                    System.out.println("Disciplina associada com sucesso.");
+                    System.out.println("Disciplina associada com sucesso!!");
                 } else {
-                    System.out.println("Falha ao associar disciplina.");
+                    System.out.println("Falha ao associar disciplina!!");
                 }
             } else {
-                System.out.println("Selecione um professor e uma disciplina válidos.");
+                System.out.println("Selecione um professor e uma disciplina válidos!!");
             }
             associarDisciplinaStage.close();
         });
 
-        associarDisciplinaLayout.getChildren().addAll(professorLabel, professorChoiceBox, disciplinaLabel, disciplinaChoiceBox, associarButton);
+        Button voltarButton = new Button("Voltar");
+        voltarButton.setStyle("-fx-text-fill: red;");
+        voltarButton.setOnAction(e -> associarDisciplinaStage.close());
 
-        Scene associarDisciplinaScene = new Scene(associarDisciplinaLayout, 400, 300);
+        associarDisciplinaLayout.getChildren().addAll(professorLabel, professorChoiceBox,disciplinaLabel, disciplinaChoiceBox,associarButton, voltarButton);
+
+        Scene associarDisciplinaScene = new Scene(associarDisciplinaLayout, 640, 360);
         associarDisciplinaStage.setScene(associarDisciplinaScene);
         associarDisciplinaStage.show();
     }
-    
-    
+
     private void criarQuiz() {
         Stage criarQuizStage = new Stage();
         criarQuizStage.setTitle("Criar Quiz");
@@ -219,7 +250,7 @@ public class MenuProfessor {
         professorChoiceBox.getSelectionModel().selectFirst();
 
         Label disciplinaLabel = new Label("Selecione a Disciplina:");
-        ChoiceBox<Disciplina> disciplinaChoiceBox = new ChoiceBox<>();
+        ChoiceBox<DisciplinaDTO> disciplinaChoiceBox = new ChoiceBox<>();
         disciplinaChoiceBox.getItems().addAll(loginService.getTodasDisciplinas());
         disciplinaChoiceBox.getSelectionModel().selectFirst();
 
@@ -227,9 +258,13 @@ public class MenuProfessor {
         criarButton.setOnAction(e -> {
             String titulo = tituloTextField.getText();
             Professor professorSelecionado = professorChoiceBox.getSelectionModel().getSelectedItem();
-            Disciplina disciplinaSelecionada = disciplinaChoiceBox.getSelectionModel().getSelectedItem();
+            DisciplinaDTO disciplinaSelecionadaDTO = disciplinaChoiceBox.getSelectionModel().getSelectedItem();
 
-            if (!titulo.isEmpty() && professorSelecionado != null && disciplinaSelecionada != null) {
+            if (!titulo.isEmpty() && professorSelecionado != null && disciplinaSelecionadaDTO != null) {
+                Disciplina disciplinaSelecionada = new Disciplina();
+                disciplinaSelecionada.setId(disciplinaSelecionadaDTO.getId());
+                disciplinaSelecionada.setNome(disciplinaSelecionadaDTO.getNome());
+
                 Quiz novoQuiz = new Quiz();
                 novoQuiz.setTitulo(titulo);
                 novoQuiz.setProfessor(professorSelecionado);
@@ -237,88 +272,56 @@ public class MenuProfessor {
 
                 boolean sucesso = loginService.criarQuiz(novoQuiz);
                 if (sucesso) {
-                    System.out.println("Quiz criado e salvo com sucesso: " + titulo);
+                    System.out.println("Quiz criado e guardado com sucesso: " + titulo);
                 } else {
-                    System.out.println("Falha ao salvar o quiz.");
+                    System.out.println("Falha ao guardar o quiz!!");
                 }
             } else {
-                System.out.println("Insira um título válido e selecione um professor e uma disciplina.");
+                System.out.println("Insira um título válido e/ou selecione um professor e uma disciplina!!");
             }
             criarQuizStage.close();
         });
 
-        criarQuizLayout.getChildren().addAll(tituloLabel, tituloTextField, professorLabel, professorChoiceBox, disciplinaLabel, disciplinaChoiceBox, criarButton);
+        criarQuizLayout.getChildren().addAll(tituloLabel, tituloTextField,professorLabel, professorChoiceBox,disciplinaLabel, disciplinaChoiceBox,criarButton);
+        
+        Button voltarButton = new Button("Voltar");
+        voltarButton.setStyle("-fx-text-fill: red;");
+        voltarButton.setOnAction(e -> criarQuizStage.close());
 
-        Scene criarQuizScene = new Scene(criarQuizLayout, 400, 300);
+        Scene criarQuizScene = new Scene(criarQuizLayout, 640, 360);
         criarQuizStage.setScene(criarQuizScene);
         criarQuizStage.show();
     }
+          
+    private void verQuizzes() {
+        Stage mostrarQuizzesStage = new Stage();
+        mostrarQuizzesStage.setTitle("Quizzes Criados");
 
-    private void editarQuiz() {
-        Stage editarQuizStage = new Stage();
-        editarQuizStage.setTitle("Editar Quiz");
+        TableView<QuizDTO> tableView = new TableView<>();
 
-        VBox editarQuizLayout = new VBox(10);
-        editarQuizLayout.setAlignment(Pos.CENTER);
+        TableColumn<QuizDTO, String> tituloColuna = new TableColumn<>("Título");
+        tituloColuna.setCellValueFactory(new PropertyValueFactory<>("titulo"));
 
-        Label quizLabel = new Label("Selecione o Quiz:");
-        ChoiceBox<Quiz> quizChoiceBox = new ChoiceBox<>();
-        quizChoiceBox.getItems().addAll(loginService.getTodosQuizzes());
-        quizChoiceBox.getSelectionModel().selectFirst();
+        TableColumn<QuizDTO, Long> professorIdColuna = new TableColumn<>("ID Professor");
+        professorIdColuna.setCellValueFactory(new PropertyValueFactory<>("professorId"));
 
-        Label perguntaLabel = new Label("Texto da Pergunta:");
-        TextField perguntaTextField = new TextField();
+        TableColumn<QuizDTO, Long> disciplinaIdColuna = new TableColumn<>("ID Disciplina");
+        disciplinaIdColuna.setCellValueFactory(new PropertyValueFactory<>("disciplinaId"));
 
-        Label opcoesLabel = new Label("Opções de Resposta:");
-        TextField opcaoATextField = new TextField("Opção A");
-        TextField opcaoBTextField = new TextField("Opção B");
-        TextField opcaoCTextField = new TextField("Opção C");
-        TextField opcaoDTextField = new TextField("Opção D");
+        tableView.getColumns().addAll(tituloColuna, professorIdColuna, disciplinaIdColuna);
 
-        Label corretaLabel = new Label("Opção Correta:");
-        ChoiceBox<String> corretaChoiceBox = new ChoiceBox<>();
-        corretaChoiceBox.getItems().addAll("Opção A", "Opção B", "Opção C", "Opção D");
-        corretaChoiceBox.getSelectionModel().selectFirst();
+        List<QuizDTO> quizzes = loginService.getTodosQuizzes();
+        tableView.getItems().addAll(quizzes);
 
-        Button salvarButton = new Button("Salvar");
-        salvarButton.setOnAction(e -> {
-            Quiz quizSelecionado = quizChoiceBox.getSelectionModel().getSelectedItem();
-            String textoPergunta = perguntaTextField.getText();
-            String opcaoA = opcaoATextField.getText();
-            String opcaoB = opcaoBTextField.getText();
-            String opcaoC = opcaoCTextField.getText();
-            String opcaoD = opcaoDTextField.getText();
-            String opcaoCorreta = corretaChoiceBox.getSelectionModel().getSelectedItem();
-
-            if (quizSelecionado != null && !textoPergunta.isEmpty() && !opcaoA.isEmpty() && !opcaoB.isEmpty() && !opcaoC.isEmpty() && !opcaoD.isEmpty()) {
-                Pergunta novaPergunta = new Pergunta();
-                novaPergunta.setQuestao(textoPergunta);
-                novaPergunta.setOpcaoA(opcaoA);
-                novaPergunta.setOpcaoB(opcaoB);
-                novaPergunta.setOpcaoC(opcaoC);
-                novaPergunta.setOpcaoD(opcaoD);
-                novaPergunta.setRespostaCorreta(opcaoCorreta);
-
-                Long professorId = (long) professor.getId(); 
-
-                boolean sucesso = loginService.editarQuiz(quizSelecionado.getId(), novaPergunta, professorId);
-                if (sucesso) {
-                    System.out.println("Pergunta adicionada com sucesso ao quiz.");
-                } else {
-                    System.out.println("Falha ao adicionar pergunta ao quiz.");
-                }
-            } else {
-                System.out.println("Preencha todos os campos corretamente.");
-            }
-            editarQuizStage.close();
-        });
-
-        editarQuizLayout.getChildren().addAll(quizLabel, quizChoiceBox, perguntaLabel, perguntaTextField, opcoesLabel, opcaoATextField, opcaoBTextField, opcaoCTextField, opcaoDTextField, corretaLabel, corretaChoiceBox, salvarButton);
-
-        Scene editarQuizScene = new Scene(editarQuizLayout, 400, 500);
-        editarQuizStage.setScene(editarQuizScene);
-        editarQuizStage.show();
+        VBox layout = new VBox(tableView);
+        Scene scene = new Scene(layout, 640, 360);
+        mostrarQuizzesStage.setScene(scene);
+        mostrarQuizzesStage.show();
     }
+
+
+
+
     
     
 }

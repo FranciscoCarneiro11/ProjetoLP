@@ -1,6 +1,6 @@
 package upt.projeto.model;
 
-import com.upt.hibernate.proj_9grupo.model.RespostaQuiz;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

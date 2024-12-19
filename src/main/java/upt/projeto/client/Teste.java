@@ -81,7 +81,7 @@ public class Teste extends Application {
 	        String password = passwordField.getText();
 	        
 	        if (email.isEmpty() || password.isEmpty()) {
-	            errorMessageLabel.setText("Por favor, preencha todos os campos.");
+	            errorMessageLabel.setText("Por favor preencha todos os campos.");
 	            return;
 	        }
 	        
@@ -111,7 +111,7 @@ public class Teste extends Application {
 	                }
 	            }
 	        } else {
-	            errorMessageLabel.setText("Email ou password incorretos.");
+	            errorMessageLabel.setText("Email ou password incorretos!!");
 	        }
 	    });
 

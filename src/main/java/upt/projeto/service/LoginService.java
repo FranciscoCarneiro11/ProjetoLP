@@ -6,10 +6,12 @@ import upt.projeto.model.AnoEscolaridade;
 import upt.projeto.model.AssociacaoAluno;
 import upt.projeto.model.Curso;
 import upt.projeto.model.Disciplina;
+import upt.projeto.modelDTO.DisciplinaDTO;
 import upt.projeto.model.Login;
 import upt.projeto.model.Pergunta;
 import upt.projeto.model.Professor;
 import upt.projeto.model.Quiz;
+import upt.projeto.modelDTO.QuizDTO;
 import upt.projeto.model.RespostaLogin;
 import upt.projeto.model.Utilizador;
 
@@ -22,7 +24,6 @@ import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -98,42 +99,33 @@ public class LoginService {
     
     public boolean criarAnoEscolaridade(AnoEscolaridade anoEscolaridade) {
         String url = BASE_URL + "/ano_escolaridade"; 
-        try {
-            ResponseEntity<AnoEscolaridade> response = restTemplate.postForEntity(url, anoEscolaridade, AnoEscolaridade.class);
+        ResponseEntity<AnoEscolaridade> response = restTemplate.postForEntity(url, anoEscolaridade, AnoEscolaridade.class);
 
-            if (response.getStatusCode().is2xxSuccessful()) {
-                System.out.println("Ano de escolaridade criado com sucesso: " + response.getBody());
-                return true; 
-            } else {
-                System.out.println("Falha ao criar ano de escolaridade: " + response.getStatusCode());
-                return false; 
-            }
-        } catch (Exception e) {
-            System.out.println("Erro ao chamar a API: " + e.getMessage());
-            e.printStackTrace();
-            return false;
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Ano de escolaridade criado com sucesso: " + response.getBody());
+            return true; 
+        } else {
+            System.out.println("Falha ao criar ano de escolaridade: " + response.getStatusCode());
+            return false; 
         }
     }
+
     
     
     public List<Curso> getTodosCursos() {
-        String url = BASE_URL + "/curso/todos"; 
-        System.out.println("URL chamada: " + url); 
+        String url = BASE_URL + "/curso/todos";
+        System.out.println("URL chamada: " + url);
 
-        try {
-            ResponseEntity<List<Curso>> response = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<Curso>>() {});
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return response.getBody();
-            } else {
-                System.out.println("Falha ao obter todos os cursos: " + response.getStatusCode());
-                return new ArrayList<>();
-            }
-        } catch (Exception e) {
-            System.out.println("Erro ao chamar a API: " + e.getMessage());
-            e.printStackTrace();
+        ResponseEntity<List<Curso>> response = restTemplate.exchange(url,HttpMethod.GET,null,new ParameterizedTypeReference<List<Curso>>() {});
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        } else {
+            System.out.println("Falha ao obter todos os cursos: " + response.getStatusCode());
             return new ArrayList<>();
         }
     }
+
     
 
     public boolean criarProfessor(Professor professor) {
@@ -162,62 +154,43 @@ public class LoginService {
     }
 
     public boolean criarQuiz(Quiz quiz) {
-        String url = BASE_URL + "/quiz"; 
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            
-            HttpEntity<Quiz> request = new HttpEntity<>(quiz, headers);
-            
-            ResponseEntity<Quiz> response = restTemplate.postForEntity(url, request, Quiz.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                System.out.println("Quiz criado com sucesso: " + response.getBody());
-                return true;
-            } else {
-                System.out.println("Falha ao criar quiz: " + response.getStatusCode());
-                return false;
-            }
-        } catch (Exception e) {
-            System.out.println("Erro ao chamar a API: " + e.getMessage());
-            e.printStackTrace();
+        String url = BASE_URL + "/quiz";
+
+        QuizDTO quizDTO = new QuizDTO();
+        quizDTO.setTitulo(quiz.getTitulo());
+        quizDTO.setProfessorId((long) quiz.getProfessor().getId());
+        quizDTO.setDisciplinaId((long) quiz.getDisciplina().getId());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON); 		//informa ao servidor que os dados enviados devem ser interpretados como JSON
+
+        HttpEntity<QuizDTO> request = new HttpEntity<>(quizDTO, headers);
+        ResponseEntity<Quiz> response = restTemplate.postForEntity(url, request, Quiz.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Quiz criado com sucesso: " + response.getBody());
+            return true;
+        } else {
+            System.out.println("Falha ao criar quiz: " + response.getStatusCode());
             return false;
         }
     }
+
     
     public boolean editarQuiz(int quizId, Pergunta pergunta, Long professorId) {
-        /*
-         * String url = BASE_URL + "/quiz/" + quizId + "/pergunta?professorId=" + professorId;
-         * try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<Pergunta> request = new HttpEntity<>(pergunta, headers);
-
-            ResponseEntity<Pergunta> response = restTemplate.postForEntity(url, request, Pergunta.class);
-            return response.getStatusCode().is2xxSuccessful();
-        } catch (Exception e) {
-            System.out.println("Erro ao adicionar pergunta ao quiz: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
-         */
-         
+      
     	return false;
     }
     
-    public List<Quiz> getTodosQuizzes() {
+    public List<QuizDTO> getTodosQuizzes() {
         String url = BASE_URL + "/quiz";
-        try {
-            ResponseEntity<List<Quiz>> response = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<Quiz>>() {});
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return response.getBody();
-            } else {
-                System.out.println("Falha ao obter todos os quizzes: " + response.getStatusCode());
-                return new ArrayList<>();
-            }
-        } catch (Exception e) {
-            System.out.println("Erro ao chamar a API: " + e.getMessage());
-            e.printStackTrace();
+
+        ResponseEntity<List<QuizDTO>> response = restTemplate.exchange(url,HttpMethod.GET,null,new ParameterizedTypeReference<List<QuizDTO>>() {});
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        } else {
+            System.out.println("Falha ao obter todos os quizzes: " + response.getStatusCode());
             return new ArrayList<>();
         }
     }
@@ -230,45 +203,35 @@ public class LoginService {
         return null;
     }
     
-   public List<Disciplina> getTodasDisciplinas() {
-        String url = BASE_URL + "/disciplina"; 
-        try {
-            ResponseEntity<List<Disciplina>> response = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<Disciplina>>() {});
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return response.getBody();
-            } else {
-                System.out.println("Falha ao obter todas as disciplinas: " + response.getStatusCode());
-                return new ArrayList<>();
-            }
-        } catch (HttpClientErrorException e) {
-            System.out.println("Erro ao chamar a API: " + e.getStatusCode() + " : " + e.getResponseBodyAsString());
-            e.printStackTrace();
-            return new ArrayList<>();
-        } catch (Exception e) {
-            System.out.println("Erro ao chamar a API: " + e.getMessage());
-            e.printStackTrace();
+    
+    public List<DisciplinaDTO> getTodasDisciplinas() {
+        String url = BASE_URL + "/disciplina";
+
+        ResponseEntity<List<DisciplinaDTO>> response = restTemplate.exchange(url,HttpMethod.GET,null,new ParameterizedTypeReference<List<DisciplinaDTO>>() {});
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        } else {
+            System.out.println("Falha ao obter todas as disciplinas: " + response.getStatusCode());
             return new ArrayList<>();
         }
     }
 
-   public boolean associarDisciplinaProfessor(Long professorId, Long disciplinaId) {
-	    String url = BASE_URL + "/professor/" + professorId + "/disciplina/" + disciplinaId; 
 
-	    try {
-	        ResponseEntity<String> response = restTemplate.postForEntity(url, null, String.class); 
+    public boolean associarDisciplinaProfessor(Long professorId, Long disciplinaId) {
+        String url = BASE_URL + "/professor/" + professorId + "/disciplina/" + disciplinaId;
 
-	        if (response.getStatusCode().is2xxSuccessful()) {
-	            System.out.println("Disciplina associada ao professor com sucesso.");
-	            return true; 
-	        } else {
-	            System.out.println("Falha ao associar disciplina ao professor: " + response.getStatusCode());
-	            return false; 
-	        }
-	    } catch (Exception e) {
-	        System.out.println("Erro ao chamar a API: " + e.getMessage());
-	        return false;
-	    }
-	}
+        ResponseEntity<String> response = restTemplate.postForEntity(url, null, String.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Disciplina associada ao professor com sucesso.");
+            return true;
+        } else {
+            System.out.println("Falha ao associar disciplina ao professor: " + response.getStatusCode());
+            return false;
+        }
+    }
+
 
     public boolean criarAluno(Aluno aluno) {
         String url = BASE_URL + "/aluno"; 
@@ -303,6 +266,7 @@ public class LoginService {
         }
         return null;
     }
+    
     
     public boolean associarAluno(Aluno aluno, Curso curso, AnoEscolaridade anoEscolaridade, List<Disciplina> disciplinas) {
         AssociacaoAluno associacao = new AssociacaoAluno();

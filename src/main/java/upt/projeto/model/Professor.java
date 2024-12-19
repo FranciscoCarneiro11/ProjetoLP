@@ -34,7 +34,7 @@ public class Professor extends Utilizador {
         this.numProfessor = numProfessor;
  }
 
-    // Get's e set's
+
     public int getNumProfessor() {
         return numProfessor;
     }
