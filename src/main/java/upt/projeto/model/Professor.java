@@ -19,8 +19,6 @@ public class Professor extends Utilizador {
     @OneToMany(mappedBy = "professor")
     private List<Quiz> quizzes = new ArrayList<>();
 
-    
- 
     public Professor() {
         super(); 
     }
@@ -32,8 +30,7 @@ public class Professor extends Utilizador {
         super.setPassword(senha); 
         
         this.numProfessor = numProfessor;
- }
-
+    }
 
     public int getNumProfessor() {
         return numProfessor;

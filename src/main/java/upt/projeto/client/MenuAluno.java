@@ -1,5 +1,6 @@
 package upt.projeto.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.collections.FXCollections;
@@ -7,9 +8,10 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -19,6 +21,7 @@ import upt.projeto.model.Aluno;
 import upt.projeto.model.AnoEscolaridade;
 import upt.projeto.model.Curso;
 import upt.projeto.model.Disciplina;
+import upt.projeto.modelDTO.DisciplinaDTO;
 import upt.projeto.service.LoginService;
 
 public class MenuAluno {
@@ -61,12 +64,10 @@ public class MenuAluno {
 	    	 verAlunos();
 	     });
 	     
-	     /*
-	      * associarAlunoButton.setOnAction(e->{
-	      *  associarAluno();
+	      associarAlunoButton.setOnAction(e->{
+	    	  associarAluno();
 	     });
-	      */
-	     
+	    
 	     logoutButton.setOnAction(e -> {
 	    	 menuAlunoStage.close(); 
 	    	 primaryStage.show(); 
@@ -156,7 +157,70 @@ public class MenuAluno {
 		    alunosStage.show();
 		}
 	 
-	 
+	 private void associarAluno() {
+		    Stage associarAlunoStage = new Stage();
+		    associarAlunoStage.setTitle("Associar Aluno a Curso, Ano e Disciplinas");
+
+		    VBox layout = new VBox(10);
+		    layout.setAlignment(Pos.CENTER);
+
+		    Label cursoLabel = new Label("Selecione o Curso:");
+		    ChoiceBox<Curso> cursoChoiceBox = new ChoiceBox<>();
+		    cursoChoiceBox.getItems().addAll(loginService.getTodosCursos());
+
+		    Label anoEscolaridadeLabel = new Label("Selecione o Ano Escolaridade:");
+		    ChoiceBox<AnoEscolaridade> anoEscolaridadeChoiceBox = new ChoiceBox<>();
 		    
+		    cursoChoiceBox.setOnAction(e -> {															//utilizado para apenas aparecer os anos de escolaridade de um curso em si
+		        Curso cursoSelecionado = cursoChoiceBox.getSelectionModel().getSelectedItem();
+		        if (cursoSelecionado != null) {
+		            List<AnoEscolaridade> anosEscolaridade = loginService.getAnosEscolaridadePorCurso((long) cursoSelecionado.getId());
+		            anoEscolaridadeChoiceBox.getItems().setAll(anosEscolaridade);
+		        }
+		    });
+
+		    Label disciplinaLabel = new Label("Selecione a/as Disciplina(s):");
+		    ListView<Disciplina> disciplinaListView = new ListView<>();
+		    disciplinaListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		    List<DisciplinaDTO> disciplinasDTO = loginService.getTodasDisciplinas();
+		    List<Disciplina> disciplinas = new ArrayList<>();
+
+		    for (DisciplinaDTO dto : disciplinasDTO) {
+		        Disciplina disciplina = new Disciplina();
+		        disciplina.setId(dto.getId());
+		        disciplina.setNome(dto.getNome());
+		        disciplinas.add(disciplina);
+		    }
+		    disciplinaListView.getItems().addAll(disciplinas);
+
+		    Button associarButton = new Button("Associar");
+		    associarButton.setOnAction(e -> {
+		        Curso cursoSelecionado = cursoChoiceBox.getSelectionModel().getSelectedItem();
+		        AnoEscolaridade anoEscolaridadeSelecionado = anoEscolaridadeChoiceBox.getSelectionModel().getSelectedItem();
+		        List<Disciplina> disciplinasSelecionadas = disciplinaListView.getSelectionModel().getSelectedItems();
+
+		        if (cursoSelecionado != null && anoEscolaridadeSelecionado != null && !disciplinasSelecionadas.isEmpty()) {
+		            boolean sucesso = loginService.associarAluno(aluno, cursoSelecionado, anoEscolaridadeSelecionado, disciplinasSelecionadas);
+		            if (sucesso) {
+		                System.out.println("Aluno associado com sucesso!");
+		            } else {
+		                System.out.println("Erro ao associar aluno.");
+		            }
+		            associarAlunoStage.close();
+		        } else {
+		            System.out.println("Selecione curso, ano e pelo menos uma disciplina.");
+		        }
+		    });
+
+		    Button voltarButton = new Button("Voltar");
+		    voltarButton.setOnAction(e -> associarAlunoStage.close());
+
+		    layout.getChildren().addAll(cursoLabel, cursoChoiceBox,anoEscolaridadeLabel, anoEscolaridadeChoiceBox,disciplinaLabel, disciplinaListView,associarButton, voltarButton);
+
+		    Scene scene = new Scene(layout, 640, 480);
+		    associarAlunoStage.setScene(scene);
+		    associarAlunoStage.show();
+		}
+
 
 }

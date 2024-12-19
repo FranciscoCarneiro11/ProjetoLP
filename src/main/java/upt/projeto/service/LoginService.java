@@ -286,25 +286,24 @@ public class LoginService {
         associacao.setAluno(aluno);
         associacao.setCurso(curso);
         associacao.setAnoEscolaridade(anoEscolaridade);
-        associacao.setDisciplinas(disciplinas); 
+        associacao.setDisciplinas(disciplinas);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<AssociacaoAluno> requestEntity = new HttpEntity<>(associacao, headers);
-     
-        String url = BASE_URL + "/associacao_aluno";
-        ResponseEntity<AssociacaoAluno> response = restTemplate.postForEntity(url, requestEntity, AssociacaoAluno.class);
 
-        if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("Associação criada com sucesso!");
-            return true; 
-        } else {
-            System.out.println("Falha ao criar a associação do aluno: " + response.getStatusCode());
-            return false; 
+        String url = BASE_URL + "/associacao_aluno";
+        try {
+            ResponseEntity<AssociacaoAluno> response = restTemplate.postForEntity(url, requestEntity, AssociacaoAluno.class);
+            return response.getStatusCode().is2xxSuccessful();
+        } catch (Exception e) {
+            System.out.println("Erro ao associar aluno: " + e.getMessage());
+            return false;
         }
     }
- 
+
+
     public List<AnoEscolaridade> getAnosEscolaridadePorCurso(Long cursoId) {
         String url = BASE_URL + "/associacao_aluno/ano_escolaridade?cursoId=" + cursoId; 
         try {
